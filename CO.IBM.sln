@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "IBM.MQ", "IBM.MQ\IBM.MQ.mpproj", "{378D3E32-ACC6-49F1-B230-078717484BAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{378D3E32-ACC6-49F1-B230-078717484BAD}.Debug|x86.ActiveCfg = Debug|x86
+		{378D3E32-ACC6-49F1-B230-078717484BAD}.Debug|x86.Build.0 = Debug|x86
+		{378D3E32-ACC6-49F1-B230-078717484BAD}.Release|x86.ActiveCfg = Release|x86
+		{378D3E32-ACC6-49F1-B230-078717484BAD}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
