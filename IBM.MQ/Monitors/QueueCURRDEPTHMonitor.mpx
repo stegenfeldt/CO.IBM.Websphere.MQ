@@ -1,7 +1,7 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Monitoring>
     <Monitors>
-      <UnitMonitor ID="IBM.MQ.QueueCurrentDepthMonitor" Accessibility="Public" Enabled="false" Target="IBM.MQ.Queue" ParentMonitorID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.ThreeStateMonitorType" ConfirmDelivery="false">
+      <UnitMonitor ID="IBM.MQ.QueueCurrentDepthMonitor" Accessibility="Public" Enabled="false" Target="IBM.MQ.Queue" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="false" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.ThreeStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <OperationalStates>
           <OperationalState ID="Success" MonitorTypeStateID="Success" HealthState="Success" />
@@ -12,54 +12,39 @@
           <IntervalSeconds>120</IntervalSeconds>
           <SyncTime />
           <ScriptName>QueueCurrentDepthMonitor.vbs</ScriptName>
-          <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 10 50</Arguments>
+          <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 100 500</Arguments>
           <ScriptBody>$IncludeFileContent/Scripts/QueueCurrentDepthMonitor.vbs$</ScriptBody>
           <TimeoutSeconds>60</TimeoutSeconds>
           <ErrorExpression>
             <SimpleExpression>
               <ValueExpression>
-                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+                <XPathQuery Type="String">Property[@Name='Status']</XPathQuery>
               </ValueExpression>
-              <Operator>GreaterEqual</Operator>
+              <Operator>Equal</Operator>
               <ValueExpression>
-                <Value Type="String">Property[@Name='ErrorThreshold']</Value>
+                <Value Type="String">ERROR</Value>
               </ValueExpression>
             </SimpleExpression>
           </ErrorExpression>
           <WarningExpression>
-            <And>
-              <Expression>
-                <SimpleExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-                  </ValueExpression>
-                  <Operator>GreaterEqual</Operator>
-                  <ValueExpression>
-                    <Value Type="String">Property[@Name='WarningThreshold']</Value>
-                  </ValueExpression>
-                </SimpleExpression>
-              </Expression>
-              <Expression>
-                <SimpleExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-                  </ValueExpression>
-                  <Operator>Less</Operator>
-                  <ValueExpression>
-                    <Value Type="String">Property[@Name='ErrorThreshold']</Value>
-                  </ValueExpression>
-                </SimpleExpression>
-              </Expression>
-            </And>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="String">Property[@Name='Status']</XPathQuery>
+              </ValueExpression>
+              <Operator>Equal</Operator>
+              <ValueExpression>
+                <Value Type="String">WARNING</Value>
+              </ValueExpression>
+            </SimpleExpression>
           </WarningExpression>
           <SuccessExpression>
             <SimpleExpression>
               <ValueExpression>
-                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+                <XPathQuery Type="String">Property[@Name='Status']</XPathQuery>
               </ValueExpression>
-              <Operator>Less</Operator>
+              <Operator>Equal</Operator>
               <ValueExpression>
-                <Value Type="String">Property[@Name='WarningThreshold']</Value>
+                <Value Type="String">OK</Value>
               </ValueExpression>
             </SimpleExpression>
           </SuccessExpression>

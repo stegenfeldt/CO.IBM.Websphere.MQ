@@ -7,8 +7,8 @@ Set oArgs = WScript.Arguments
 Dim QueueManagerName, QueueName, WarningThreshold, ErrorThreshold
 QueueManagerName= oArgs(0)
 QueueName= oArgs(1)
-WarningThreshold= oArgs(2)
-ErrorThreshold= oArgs(3)
+WarningThreshold= CDbl(oArgs(2))
+ErrorThreshold= CDbl(oArgs(3))
 
 Dim oAPI, oBag
 Set oAPI = CreateObject("MOM.ScriptAPI")
@@ -27,9 +27,16 @@ Do While Not objExecObject.StdOut.AtEndOfStream
     END IF
 Loop
 
-'oAPI.LogScriptEvent(bstrScriptName, wEventID, wSeverity, bstrDescription)
+Dim Status ' OK, WARNING or ERROR
+Status = "OK"
+If CurDepth >= ErrorThreshold Then
+    Status = "ERROR"
+ElseIf CurDepth >= WarningThreshold Then
+    Status = "WARNING"
+End If
+
+oAPI.LogScriptEvent(QueueCurrentDepthMonitor.vbs, 17001, 0, "Status: " & Status & vbCrLf & "CurDepth: " & CurDepth)
 Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("CurDepth",CurDepth)
-Call oBag.AddValue("WarningThreshold",WarningThreshold)
-Call oBag.AddValue("ErrorThreshold",ErrorThreshold)
+Call oBag.AddValue("CurDepth", CurDepth)
+Call oBag.AddValue("Status", Status)
 Call oAPI.Return(oBag)
