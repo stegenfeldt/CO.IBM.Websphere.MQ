@@ -944,70 +944,6 @@ Call oAPI.Return(oBag)
           </SuccessExpression>
         </Configuration>
       </UnitMonitor>
-      <UnitMonitor ID="IBM.MQ.QueueCurrentDepthMonitor" Accessibility="Internal" Enabled="false" Target="IBM.MQ.Queue" ParentMonitorID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.ThreeStateMonitorType" ConfirmDelivery="false">
-        <Category>AvailabilityHealth</Category>
-        <OperationalStates>
-          <OperationalState ID="Success" MonitorTypeStateID="Success" HealthState="Success" />
-          <OperationalState ID="Warning" MonitorTypeStateID="Warning" HealthState="Warning" />
-          <OperationalState ID="Error" MonitorTypeStateID="Error" HealthState="Error" />
-        </OperationalStates>
-        <Configuration>
-          <IntervalSeconds>120</IntervalSeconds>
-          <SyncTime />
-          <ScriptName>QueueCurrentDepthMonitor.vbs</ScriptName>
-          <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 10 50</Arguments>
-          <ScriptBody>$IncludeFileContent/Scripts/QueueCurrentDepthMonitor.vbs$</ScriptBody>
-          <TimeoutSeconds>60</TimeoutSeconds>
-          <ErrorExpression>
-            <SimpleExpression>
-              <ValueExpression>
-                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-              </ValueExpression>
-              <Operator>Greater</Operator>
-              <ValueExpression>
-                <Value Type="String">Property[@Name='ErrorThreshold']</Value>
-              </ValueExpression>
-            </SimpleExpression>
-          </ErrorExpression>
-          <WarningExpression>
-            <And>
-              <Expression>
-                <SimpleExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-                  </ValueExpression>
-                  <Operator>Greater</Operator>
-                  <ValueExpression>
-                    <Value Type="String">Property[@Name='HealthyThreshold']</Value>
-                  </ValueExpression>
-                </SimpleExpression>
-              </Expression>
-              <Expression>
-                <SimpleExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-                  </ValueExpression>
-                  <Operator>LessEqual</Operator>
-                  <ValueExpression>
-                    <Value Type="String">Property[@Name='WarningThreshold']</Value>
-                  </ValueExpression>
-                </SimpleExpression>
-              </Expression>
-            </And>
-          </WarningExpression>
-          <SuccessExpression>
-            <SimpleExpression>
-              <ValueExpression>
-                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-              </ValueExpression>
-              <Operator>LessEqual</Operator>
-              <ValueExpression>
-                <Value Type="String">Property[@Name='HealthyThreshold']</Value>
-              </ValueExpression>
-            </SimpleExpression>
-          </SuccessExpression>
-        </Configuration>
-      </UnitMonitor>
       <UnitMonitor ID="IBM.MQ.QueueManagerStatusMonitor" Accessibility="Internal" Enabled="true" Target="IBM.MQ.QueueManager" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.TwoStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <AlertSettings AlertMessage="IBM.MQ.QueueManagerStatusMonitor_AlertMessageResourceID">
@@ -1375,18 +1311,6 @@ Queue Manager Name: {1}</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.Queue.IPPROCS.Monitor" SubElementID="Success">
           <Name>Success</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor">
-          <Name>Current Depth</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Error">
-          <Name>Error</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Success">
-          <Name>Success</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Warning">
-          <Name>Warning</Name>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueDiscvoery">
           <Name>QueueDiscvoery</Name>

@@ -1,0 +1,88 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="IBM.MQ.QueueCurrentDepthMonitor" Accessibility="Public" Enabled="false" Target="IBM.MQ.Queue" ParentMonitorID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.ThreeStateMonitorType" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <OperationalStates>
+          <OperationalState ID="Success" MonitorTypeStateID="Success" HealthState="Success" />
+          <OperationalState ID="Warning" MonitorTypeStateID="Warning" HealthState="Warning" />
+          <OperationalState ID="Error" MonitorTypeStateID="Error" HealthState="Error" />
+        </OperationalStates>
+        <Configuration>
+          <IntervalSeconds>120</IntervalSeconds>
+          <SyncTime />
+          <ScriptName>QueueCurrentDepthMonitor.vbs</ScriptName>
+          <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 10 50</Arguments>
+          <ScriptBody>$IncludeFileContent/Scripts/QueueCurrentDepthMonitor.vbs$</ScriptBody>
+          <TimeoutSeconds>60</TimeoutSeconds>
+          <ErrorExpression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+              </ValueExpression>
+              <Operator>GreaterEqual</Operator>
+              <ValueExpression>
+                <Value Type="String">Property[@Name='ErrorThreshold']</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </ErrorExpression>
+          <WarningExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>GreaterEqual</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Property[@Name='WarningThreshold']</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Less</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Property[@Name='ErrorThreshold']</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </And>
+          </WarningExpression>
+          <SuccessExpression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+              </ValueExpression>
+              <Operator>Less</Operator>
+              <ValueExpression>
+                <Value Type="String">Property[@Name='WarningThreshold']</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </SuccessExpression>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor">
+          <Name>Current Depth</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Error">
+          <Name>Queue Depth Too High</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Success">
+          <Name>OK</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Warning">
+          <Name>Queue Depth Getting High</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

@@ -46,6 +46,9 @@
     <Compile Include="IBM.MQ.mpx">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Monitors\QueueCURRDEPTHMonitor.mpx">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ManagementPackReference Include="Microsoft.SystemCenter.DataWarehouse.Library">
@@ -80,6 +83,7 @@
     </ManagementPackReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Monitors" />
     <Folder Include="Scripts" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VSAC\Microsoft.SystemCenter.OperationsManager.targets" />

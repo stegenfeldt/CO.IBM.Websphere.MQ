@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.1.5.4</Version>
+      <Version>3.1.5.13</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -1026,100 +1026,6 @@ Call oAPI.Return(oBag)]]></ScriptBody>
           </SuccessExpression>
         </Configuration>
       </UnitMonitor>
-      <UnitMonitor ID="IBM.MQ.QueueCurrentDepthMonitor" Accessibility="Internal" Enabled="false" Target="IBM.MQ.Queue" ParentMonitorID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.ThreeStateMonitorType" ConfirmDelivery="false">
-        <Category>AvailabilityHealth</Category>
-        <OperationalStates>
-          <OperationalState ID="Success" MonitorTypeStateID="Success" HealthState="Success" />
-          <OperationalState ID="Warning" MonitorTypeStateID="Warning" HealthState="Warning" />
-          <OperationalState ID="Error" MonitorTypeStateID="Error" HealthState="Error" />
-        </OperationalStates>
-        <Configuration>
-          <IntervalSeconds>120</IntervalSeconds>
-          <SyncTime />
-          <ScriptName>QueueCurrentDepthMonitor.vbs</ScriptName>
-          <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 10 50</Arguments>
-          <ScriptBody><![CDATA[Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName
-QueueManagerName= oArgs(0)
-QueueName= oArgs(1)
-WarningThreshold= oArgs(2)
-ErrorThreshold= oArgs(3)
-HealthyThreshold= oArgs(4)
-
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
-
-Set objShell = WScript.CreateObject("WScript.Shell")
-QueueCommand = "cmd /c echo Display Queue(" & QueueName & ") CURDEPTH | runmqsc " & QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
-
-Do While Not objExecObject.StdOut.AtEndOfStream
-MQText = objExecObject.StdOut.ReadLine()
-IF INSTR(MQText,"CURDEPTH(") THEN
-StatusArray =  Split(MQText, "CURDEPTH(")
-CurDepth= CINT(TRIM(REPLACE(StatusArray(1),")","")))
-
-END IF
-Loop
-
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("CurDepth",CurDepth)
-Call oBag.AddValue("WarningThreshold",WarningThreshold)
-Call oBag.AddValue("ErrorThreshold",ErrorThreshold)
-Call oBag.AddValue("HealthyThreshold",HealthyThreshold)
-Call oAPI.Return(oBag)]]></ScriptBody>
-          <TimeoutSeconds>60</TimeoutSeconds>
-          <ErrorExpression>
-            <SimpleExpression>
-              <ValueExpression>
-                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-              </ValueExpression>
-              <Operator>Greater</Operator>
-              <ValueExpression>
-                <Value Type="String">Property[@Name='ErrorThreshold']</Value>
-              </ValueExpression>
-            </SimpleExpression>
-          </ErrorExpression>
-          <WarningExpression>
-            <And>
-              <Expression>
-                <SimpleExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-                  </ValueExpression>
-                  <Operator>Greater</Operator>
-                  <ValueExpression>
-                    <Value Type="String">Property[@Name='HealthyThreshold']</Value>
-                  </ValueExpression>
-                </SimpleExpression>
-              </Expression>
-              <Expression>
-                <SimpleExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-                  </ValueExpression>
-                  <Operator>LessEqual</Operator>
-                  <ValueExpression>
-                    <Value Type="String">Property[@Name='WarningThreshold']</Value>
-                  </ValueExpression>
-                </SimpleExpression>
-              </Expression>
-            </And>
-          </WarningExpression>
-          <SuccessExpression>
-            <SimpleExpression>
-              <ValueExpression>
-                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
-              </ValueExpression>
-              <Operator>LessEqual</Operator>
-              <ValueExpression>
-                <Value Type="String">Property[@Name='HealthyThreshold']</Value>
-              </ValueExpression>
-            </SimpleExpression>
-          </SuccessExpression>
-        </Configuration>
-      </UnitMonitor>
       <UnitMonitor ID="IBM.MQ.QueueManagerStatusMonitor" Accessibility="Internal" Enabled="true" Target="IBM.MQ.QueueManager" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.TwoStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <AlertSettings AlertMessage="IBM.MQ.QueueManagerStatusMonitor_AlertMessageResourceID">
@@ -1188,6 +1094,104 @@ Call oAPI.Return(oBag)
               <Operator>Equal</Operator>
               <ValueExpression>
                 <Value Type="String">Running</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </SuccessExpression>
+        </Configuration>
+      </UnitMonitor>
+      <UnitMonitor ID="IBM.MQ.QueueCurrentDepthMonitor" Accessibility="Public" Enabled="false" Target="IBM.MQ.Queue" ParentMonitorID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.ThreeStateMonitorType" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <OperationalStates>
+          <OperationalState ID="Success" MonitorTypeStateID="Success" HealthState="Success" />
+          <OperationalState ID="Warning" MonitorTypeStateID="Warning" HealthState="Warning" />
+          <OperationalState ID="Error" MonitorTypeStateID="Error" HealthState="Error" />
+        </OperationalStates>
+        <Configuration>
+          <IntervalSeconds>120</IntervalSeconds>
+          <SyncTime />
+          <ScriptName>QueueCurrentDepthMonitor.vbs</ScriptName>
+          <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 10 50</Arguments>
+          <ScriptBody><![CDATA[Option Explicit
+SetLocale("en-us")
+
+Dim oArgs
+Set oArgs = WScript.Arguments
+
+Dim QueueManagerName, QueueName, WarningThreshold, ErrorThreshold
+QueueManagerName= oArgs(0)
+QueueName= oArgs(1)
+WarningThreshold= oArgs(2)
+ErrorThreshold= oArgs(3)
+
+Dim oAPI, oBag
+Set oAPI = CreateObject("MOM.ScriptAPI")
+
+Dim objShell, objExecObject, QueueCommand
+Set objShell = WScript.CreateObject("WScript.Shell")
+QueueCommand = "cmd /c echo Display Queue(" & Trim(QueueName) & ") CURDEPTH | runmqsc " & QueueManagerName
+Set objExecObject = objShell.Exec(QueueCommand)
+
+Dim MQText, StatusArray, CurDepth
+Do While Not objExecObject.StdOut.AtEndOfStream
+    MQText = objExecObject.StdOut.ReadLine()
+    IF INSTR(MQText,"CURDEPTH(") THEN
+        StatusArray =  Split(MQText, "CURDEPTH(")
+        CurDepth= CDbl(TRIM(REPLACE(StatusArray(1),")","")))
+    END IF
+Loop
+
+'oAPI.LogScriptEvent(bstrScriptName, wEventID, wSeverity, bstrDescription)
+Set oBag = oAPI.CreatePropertyBag()
+Call oBag.AddValue("CurDepth",CurDepth)
+Call oBag.AddValue("WarningThreshold",WarningThreshold)
+Call oBag.AddValue("ErrorThreshold",ErrorThreshold)
+Call oAPI.Return(oBag)]]></ScriptBody>
+          <TimeoutSeconds>60</TimeoutSeconds>
+          <ErrorExpression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+              </ValueExpression>
+              <Operator>GreaterEqual</Operator>
+              <ValueExpression>
+                <Value Type="String">Property[@Name='ErrorThreshold']</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </ErrorExpression>
+          <WarningExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>GreaterEqual</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Property[@Name='WarningThreshold']</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Less</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Property[@Name='ErrorThreshold']</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </And>
+          </WarningExpression>
+          <SuccessExpression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="String">Property[@Name='CurDepth']</XPathQuery>
+              </ValueExpression>
+              <Operator>Less</Operator>
+              <ValueExpression>
+                <Value Type="String">Property[@Name='WarningThreshold']</Value>
               </ValueExpression>
             </SimpleExpression>
           </SuccessExpression>
@@ -1484,18 +1488,6 @@ Queue Manager Name: {1}</Description>
         <DisplayString ElementID="IBM.MQ.Queue.IPPROCS.Monitor" SubElementID="Success">
           <Name>Success</Name>
         </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor">
-          <Name>Current Depth</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Error">
-          <Name>Error</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Success">
-          <Name>Success</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Warning">
-          <Name>Warning</Name>
-        </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueDiscvoery">
           <Name>QueueDiscvoery</Name>
           <Description>discover Queues</Description>
@@ -1569,6 +1561,18 @@ Host Name: {2}</Description>
         </DisplayString>
         <DisplayString ElementID="QueueManagerHostingQueue">
           <Name>QueueManagerHostingQueue</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor">
+          <Name>Current Depth</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Error">
+          <Name>Queue Depth Too High</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Success">
+          <Name>OK</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueCurrentDepthMonitor" SubElementID="Warning">
+          <Name>Queue Depth Getting High</Name>
         </DisplayString>
       </DisplayStrings>
       <KnowledgeArticles></KnowledgeArticles>
