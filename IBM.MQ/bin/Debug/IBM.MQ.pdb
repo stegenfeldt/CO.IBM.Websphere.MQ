@@ -25,7 +25,7 @@ IBM.MQ.mpx*IBM.MQ.ListenerStatusMonitor*813*8*UnitMonitor
 IBM.MQ.mpx*IBM.MQ.MQ_Installation1.ServiceMonitor*888*8*UnitMonitor
 IBM.MQ.mpx*IBM.MQ.Queue.IPPROCS.Monitor*909*8*UnitMonitor
 IBM.MQ.mpx*IBM.MQ.QueueManagerStatusMonitor*947*8*UnitMonitor
-Monitors\QueueCURRDEPTHMonitor.mpx*IBM.MQ.QueueCurrentDepthMonitor*4*8*UnitMonitor
+Monitors\QueueMonitors.mptg.mpx*IBM.MQ.CurrentQueueDepth*6*8*UnitMonitor
 IBM.MQ.mpx*IBM.MQ.QueueManagerChannelsMonitor*1020*8*DependencyMonitor
 IBM.MQ.mpx*IBM.MQ.QueueManagerListenersMonitor*1025*8*DependencyMonitor
 IBM.MQ.mpx*IBM.MQ.QueueManagerQueuesMonitor*1030*8*DependencyMonitor
@@ -56,6 +56,7 @@ IBM.MQ.mpx*IBM.MQ.ListenerStatusMonitor_AlertMessageResourceID*1097*8*StringReso
 IBM.MQ.mpx*IBM.MQ.MQ_Installation1.ServiceMonitor_AlertMessageResourceID*1098*8*StringResource
 IBM.MQ.mpx*IBM.MQ.Queue.DepthAndIPPROCS.Monitor_AlertMessageResourceID*1099*8*StringResource
 IBM.MQ.mpx*IBM.MQ.QueueManagerStatusMonitor_AlertMessageResourceID*1100*8*StringResource
+Monitors\QueueMonitors.mptg.mpx*IBM.MQ.CurrentQueueDepth.AlertMessage*68*8*StringResource
 IBM.MQ.mpx*IBM.MQ*1107*10*DisplayString
 IBM.MQ.mpx*IBM.MQ.Channel*1114*10*DisplayString
 IBM.MQ.mpx*IBM.MQ.Channel*1117*10*DisplayString*SubElementID*BATCHSZ
@@ -136,9 +137,10 @@ IBM.MQ.mpx*IBM.MQ.Server.Discovery*1377*10*DisplayString
 IBM.MQ.mpx*IBM.MQ.ServerHostingQueueManager*1380*10*DisplayString
 IBM.MQ.mpx*IBM.MQ.ServerState*1383*10*DisplayString
 IBM.MQ.mpx*QueueManagerHostingQueue*1386*10*DisplayString
-Monitors\QueueCURRDEPTHMonitor.mpx*IBM.MQ.QueueCurrentDepthMonitor*58*10*DisplayString
-Monitors\QueueCURRDEPTHMonitor.mpx*IBM.MQ.QueueCurrentDepthMonitor*61*10*DisplayString*SubElementID*Error
-Monitors\QueueCURRDEPTHMonitor.mpx*IBM.MQ.QueueCurrentDepthMonitor*64*10*DisplayString*SubElementID*Success
-Monitors\QueueCURRDEPTHMonitor.mpx*IBM.MQ.QueueCurrentDepthMonitor*67*10*DisplayString*SubElementID*Warning
+Monitors\QueueMonitors.mptg.mpx*IBM.MQ.CurrentQueueDepth*74*10*DisplayString
+Monitors\QueueMonitors.mptg.mpx*IBM.MQ.CurrentQueueDepth.AlertMessage*78*10*DisplayString
+Monitors\QueueMonitors.mptg.mpx*IBM.MQ.CurrentQueueDepth*85*10*DisplayString*SubElementID*Error
+Monitors\QueueMonitors.mptg.mpx*IBM.MQ.CurrentQueueDepth*89*10*DisplayString*SubElementID*Warning
+Monitors\QueueMonitors.mptg.mpx*IBM.MQ.CurrentQueueDepth*93*10*DisplayString*SubElementID*Success
 IBM.MQ.mpx*IBM.MQ.QueueManager16*1393*6*Image
 IBM.MQ.mpx*IBM.MQ.QueueManager80*1394*6*Image

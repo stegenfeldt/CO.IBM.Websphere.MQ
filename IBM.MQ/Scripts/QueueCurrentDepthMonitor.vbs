@@ -35,7 +35,7 @@ ElseIf CurDepth >= WarningThreshold Then
     Status = "WARNING"
 End If
 
-oAPI.LogScriptEvent(QueueCurrentDepthMonitor.vbs, 17001, 0, "Status: " & Status & vbCrLf & "CurDepth: " & CurDepth)
+Call oAPI.LogScriptEvent("QueueCurrentDepthMonitor.vbs", 17001, 0, "Status: " & Status & vbCrLf & "CurDepth: " & CurDepth)
 Set oBag = oAPI.CreatePropertyBag()
 Call oBag.AddValue("CurDepth", CurDepth)
 Call oBag.AddValue("Status", Status)

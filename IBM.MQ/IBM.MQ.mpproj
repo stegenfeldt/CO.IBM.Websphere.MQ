@@ -46,8 +46,9 @@
     <Compile Include="IBM.MQ.mpx">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Monitors\QueueCURRDEPTHMonitor.mpx">
+    <Compile Include="Monitors\QueueMonitors.mptg.mpx">
       <SubType>Code</SubType>
+      <DependentUpon>Monitors\QueueMonitors.mptg</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +86,12 @@
   <ItemGroup>
     <Folder Include="Monitors" />
     <Folder Include="Scripts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Monitors\QueueMonitors.mptg">
+      <SubType>Content</SubType>
+      <Generator>FragmentGenerator</Generator>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VSAC\Microsoft.SystemCenter.OperationsManager.targets" />
 </Project>
