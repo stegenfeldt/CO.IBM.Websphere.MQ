@@ -1,5 +1,5 @@
 ﻿Option Explicit
-SetLocale("en-us")
+'SetLocale("en-us")
 
 Dim oArgs
 Set oArgs = WScript.Arguments

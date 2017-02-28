@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.1.5.29</Version>
+      <Version>3.1.5.31</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -1112,7 +1112,7 @@ Call oAPI.Return(oBag)
           <ScriptName>QueueCurrentDepthMonitor.vbs</ScriptName>
           <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 100 500</Arguments>
           <ScriptBody><![CDATA[Option Explicit
-SetLocale("en-us")
+'SetLocale("en-us")
 
 Dim oArgs
 Set oArgs = WScript.Arguments
