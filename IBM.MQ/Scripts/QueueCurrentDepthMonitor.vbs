@@ -15,6 +15,7 @@ Set oAPI = CreateObject("MOM.ScriptAPI")
 
 Dim objShell, objExecObject, QueueCommand
 Set objShell = WScript.CreateObject("WScript.Shell")
+' cmd /c echo Display Queue(<queuename>) CURDEPTH | runmqsc <queuemgr>
 QueueCommand = "cmd /c echo Display Queue(" & Trim(QueueName) & ") CURDEPTH | runmqsc " & QueueManagerName
 Set objExecObject = objShell.Exec(QueueCommand)
 
