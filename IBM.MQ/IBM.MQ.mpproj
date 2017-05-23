@@ -97,6 +97,9 @@
       <SubType>Code</SubType>
       <DependentUpon>Monitors\QueueMonitors.mptg</DependentUpon>
     </Compile>
+    <Compile Include="MonitorTypes\IBM.MQ.Queue.Perf.MonitorType.mpx">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ProbeActions\IBM.MQ.Queue.PerfPB.ProbeAction.mpx">
       <SubType>Code</SubType>
     </Compile>
@@ -118,26 +121,31 @@
       <HintPath>C:\Program Files (x86)\System Center Visual Studio Authoring Extensions\References\OM2012R2\Microsoft.SystemCenter.DataWarehouse.Library.mp</HintPath>
       <Alias>SCDW</Alias>
       <MinVersion>7.1.10226.0</MinVersion>
+      <PackageToBundle>False</PackageToBundle>
     </ManagementPackReference>
     <ManagementPackReference Include="Microsoft.SystemCenter.Library">
       <HintPath>C:\Program Files (x86)\System Center Visual Studio Authoring Extensions\References\OM2012R2\Microsoft.SystemCenter.Library.mp</HintPath>
       <Alias>SC</Alias>
       <MinVersion>7.0.8433.0</MinVersion>
+      <PackageToBundle>False</PackageToBundle>
     </ManagementPackReference>
     <ManagementPackReference Include="Microsoft.Windows.Library">
       <HintPath>C:\Program Files (x86)\System Center Visual Studio Authoring Extensions\References\OM2012R2\Microsoft.Windows.Library.mp</HintPath>
       <Alias>Windows</Alias>
       <MinVersion>7.5.8501.0</MinVersion>
+      <PackageToBundle>False</PackageToBundle>
     </ManagementPackReference>
     <ManagementPackReference Include="System.Health.Library">
       <HintPath>C:\Program Files (x86)\System Center Visual Studio Authoring Extensions\References\OM2012R2\System.Health.Library.mp</HintPath>
       <Alias>Health</Alias>
       <MinVersion>7.0.8433.0</MinVersion>
+      <PackageToBundle>False</PackageToBundle>
     </ManagementPackReference>
     <ManagementPackReference Include="System.Library">
       <HintPath>C:\Program Files (x86)\System Center Visual Studio Authoring Extensions\References\OM2012R2\System.Library.mp</HintPath>
       <Alias>System</Alias>
       <MinVersion>7.5.8501.0</MinVersion>
+      <PackageToBundle>False</PackageToBundle>
     </ManagementPackReference>
     <ManagementPackReference Include="System.Performance.Library">
       <HintPath>C:\Program Files (x86)\System Center Visual Studio Authoring Extensions\References\OM2012R2\System.Performance.Library.mp</HintPath>
@@ -150,6 +158,7 @@
     <Folder Include="Classes" />
     <Folder Include="Discoveries" />
     <Folder Include="DataSources" />
+    <Folder Include="MonitorTypes" />
     <Folder Include="ProbeActions" />
     <Folder Include="Relationships" />
     <Folder Include="Scripts" />

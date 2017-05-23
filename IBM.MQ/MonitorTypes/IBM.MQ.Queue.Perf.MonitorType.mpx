@@ -1,0 +1,161 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TypeDefinitions>
+    <MonitorTypes>
+      <UnitMonitorType ID="IBM.MQ.Queue.Perf.MonitorType" Accessibility="Public">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="Ok" />
+          <MonitorTypeState ID="Warning" />
+          <MonitorTypeState ID="Error" />
+        </MonitorTypeStates>
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>Windows!Microsoft.Windows.PowerShellSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="WarningThreshold" type="xsd:double" />
+          <xsd:element name="ErrorThreshold" type="xsd:double" />
+          <xsd:element name="QueueManager" type="NonNullString" />
+          <xsd:element name="QueueName" type="xsd:string" minOccurs="0" maxOccurs="1" />
+          <xsd:element name="DisplayParameter" type="NonNullString"/>
+          <xsd:element name="TimeoutSeconds" type="xsd:integer" />
+          <xsd:element name="IntervalSeconds" type="xsd:integer" />
+          <xsd:element name="SyncTime" type="xsd:string" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="WarningThreshold" ParameterType="double" Selector="$Config/WarningThreshold$" />
+          <OverrideableParameter ID="ErrorThreshold" ParameterType="double" Selector="$Config/ErrorThreshold$" />
+          <OverrideableParameter ID="TimeoutSeconds" ParameterType="int" Selector="$Config/TimeoutSeconds$" />
+          <OverrideableParameter ID="IntervalSeconds" ParameterType="int" Selector="$Config/IntervalSeconds$" />
+          <OverrideableParameter ID="SyncTime" ParameterType="string" Selector="$Config/SyncTime$" />
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="PropertyBag" TypeID="IBM.MQ.Queue.TimedPerfPropertyBag" >
+              <QueueManager>$Config/QueueManager$</QueueManager>
+              <QueueName>$Config/QueueName$</QueueName>
+              <DisplayParameter>$Config/DisplayParameter$</DisplayParameter>
+              <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
+              <SyncTime>$Config/SyncTime$</SyncTime>
+            </DataSource>
+            <ConditionDetection ID="PBFilter" TypeID="System!System.ExpressionFilter" >
+              <Expression>
+                <And>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <Value Type="String">$Config/QueueManager$</Value>
+                      </ValueExpression>
+                      <Operator>Equal</Operator>
+                      <ValueExpression>
+                        <Value Type="String">Property[@Name='Object']</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <Value Type="String">$Config/QueueName$</Value>
+                      </ValueExpression>
+                      <Operator>Equal</Operator>
+                      <ValueExpression>
+                        <Value Type="String">Property[@Name='Instance']</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <Value Type="String">$Config/DisplayParameter$</Value>
+                      </ValueExpression>
+                      <Operator>Equal</Operator>
+                      <ValueExpression>
+                        <Value Type="String">Property[@Name='Counter']</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                </And>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="OkFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <Value Type="Double">Property[@Name='Value']</Value>
+                  </ValueExpression>
+                  <Operator>Less</Operator>
+                  <ValueExpression>
+                    <Value Type="Double">$Config/WarningThreshold$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="WarningFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <And>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <Value Type="Double">Property[@Name='Value']</Value>
+                      </ValueExpression>
+                      <Operator>GreaterEqual</Operator>
+                      <ValueExpression>
+                        <Value Type="Double">$Config/WarningThreshold$</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <Value Type="Double">Property[@Name='Value']</Value>
+                      </ValueExpression>
+                      <Operator>Less</Operator>
+                      <ValueExpression>
+                        <Value Type="Double">$Config/ErrorThreshold$</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                </And>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="ErrorFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <Value Type="Double">Property[@Name='Value']</Value>
+                  </ValueExpression>
+                  <Operator>GreaterEqual</Operator>
+                  <ValueExpression>
+                    <Value Type="Double">$Config/ErrorThreshold$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="Ok">
+              <Node ID="OkFilter">
+                <Node ID="PBFilter">
+                  <Node ID="PropertyBag" />
+                </Node>
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="Warning">
+              <Node ID="WarningFilter">
+                <Node ID="PBFilter">
+                  <Node ID="PropertyBag" />
+                </Node>
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="Error">
+              <Node ID="ErrorFilter">
+                <Node ID="PBFilter">
+                  <Node ID="PropertyBag" />
+                </Node>
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+</ManagementPackFragment>
