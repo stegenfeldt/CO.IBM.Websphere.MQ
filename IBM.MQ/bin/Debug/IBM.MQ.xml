@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.15</Version>
+      <Version>3.2.0.17</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -1452,7 +1452,7 @@ Call oAPI.Return(oBag)]]></ScriptBody>
           <IntervalSeconds>120</IntervalSeconds>
           <SyncTime />
           <ScriptName>MQCurrentQueueDepth.vbs</ScriptName>
-          <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 25000 50000</Arguments>
+          <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 1000 5000</Arguments>
           <ScriptBody><![CDATA[Option Explicit
 'SetLocale("en-us")
 
@@ -1530,6 +1530,24 @@ Call oAPI.Return(oBag)]]></ScriptBody>
               </ValueExpression>
             </SimpleExpression>
           </SuccessExpression>
+        </Configuration>
+      </UnitMonitor>
+      <UnitMonitor ID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor" Accessibility="Public" Enabled="true" Target="IBM.MQ.Queue" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="false" Priority="Normal" TypeID="IBM.MQ.Queue.Perf.MonitorType" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <OperationalStates>
+          <OperationalState ID="Ok" MonitorTypeStateID="Ok" HealthState="Success" />
+          <OperationalState ID="Warning" MonitorTypeStateID="Warning" HealthState="Warning" />
+          <OperationalState ID="Error" MonitorTypeStateID="Error" HealthState="Error" />
+        </OperationalStates>
+        <Configuration>
+          <WarningThreshold>2000</WarningThreshold>
+          <ErrorThreshold>5000</ErrorThreshold>
+          <QueueManager>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$</QueueManager>
+          <QueueName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</QueueName>
+          <DisplayParameter>CURDEPTH</DisplayParameter>
+          <TimeoutSeconds>60</TimeoutSeconds>
+          <IntervalSeconds>600</IntervalSeconds>
+          <SyncTime />
         </Configuration>
       </UnitMonitor>
       <DependencyMonitor ID="IBM.MQ.QueueManagerChannelsMonitor" Accessibility="Internal" Enabled="true" Target="IBM.MQ.QueueManager" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" RelationshipType="IBM.MQ.QueueManagerHostingChannel" MemberMonitor="Health!System.Health.EntityState">
@@ -1919,6 +1937,22 @@ Please see Alert Context for more information.</Description>
         <DisplayString ElementID="IBM.MQ.CurrentQueueDepth" SubElementID="Success">
           <Name>OK</Name>
           <Description>OK</Description>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor">
+          <Name>Cueue CURDEPTH Monitor</Name>
+          <Description>Monitors the CURDEPTH value of the MQ Queue</Description>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor" SubElementID="Ok">
+          <Name>Ok</Name>
+          <Description>Ok</Description>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor" SubElementID="Warning">
+          <Name>Above Warning</Name>
+          <Description>Above Warning</Description>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor" SubElementID="Error">
+          <Name>Above Error</Name>
+          <Description>Above Error</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueManagerHostingChannel">
           <Name>QueueManagerHostingChannel</Name>

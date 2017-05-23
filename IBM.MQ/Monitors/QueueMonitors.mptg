@@ -46,5 +46,46 @@ Please see Alert Context for more information.</AlertDescription>
         <ConfirmDelivery>false</ConfirmDelivery>
       </UnitMonitorConfig>
     </Instance>
+    <Instance ID="Instance84d255ac54984c3da3ef958bc655fe4a" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.Monitoring.UnitMonitor" Version="1.0.0.0">
+      <UnitMonitorConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <MonitorType>IBM.MQ.Queue.Perf.MonitorType</MonitorType>
+        <MonitorConfig>&lt;WarningThreshold&gt;2000&lt;/WarningThreshold&gt;&lt;ErrorThreshold&gt;5000&lt;/ErrorThreshold&gt;&lt;QueueManager&gt;$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type="IBM.MQ.Queue"]/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;CURDEPTH&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;60&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;600&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</MonitorConfig>
+        <MonitorOperationalStates>
+          <OperationalState>
+            <OperationalStateId>Ok</OperationalStateId>
+            <OperationalStateDisplayName>Ok</OperationalStateDisplayName>
+            <MonitorTypeStateId>Ok</MonitorTypeStateId>
+            <HealthState>Success</HealthState>
+          </OperationalState>
+          <OperationalState>
+            <OperationalStateId>Warning</OperationalStateId>
+            <OperationalStateDisplayName>Above Warning</OperationalStateDisplayName>
+            <MonitorTypeStateId>Warning</MonitorTypeStateId>
+            <HealthState>Warning</HealthState>
+          </OperationalState>
+          <OperationalState>
+            <OperationalStateId>Error</OperationalStateId>
+            <OperationalStateDisplayName>Above Error</OperationalStateDisplayName>
+            <MonitorTypeStateId>Error</MonitorTypeStateId>
+            <HealthState>Error</HealthState>
+          </OperationalState>
+        </MonitorOperationalStates>
+        <ParentMonitor>Health!System.Health.PerformanceState</ParentMonitor>
+        <Accessibility>Public</Accessibility>
+        <Id>Queue.CURDEPTH.Perf.Monitor</Id>
+        <DisplayName>Cueue CURDEPTH Monitor</DisplayName>
+        <Description>Monitors the CURDEPTH value of the MQ Queue</Description>
+        <Target>IBM.MQ.Queue</Target>
+        <Enabled>true</Enabled>
+        <Category>AvailabilityHealth</Category>
+        <Remotable>false</Remotable>
+        <Priority>Normal</Priority>
+        <AlertAutoResolve>true</AlertAutoResolve>
+        <AlertOnState>None</AlertOnState>
+        <AlertPriority>Normal</AlertPriority>
+        <AlertSeverity>MatchMonitorHealth</AlertSeverity>
+        <ConfirmDelivery>false</ConfirmDelivery>
+      </UnitMonitorConfig>
+    </Instance>
   </Instances>
 </TemplateGroup>
