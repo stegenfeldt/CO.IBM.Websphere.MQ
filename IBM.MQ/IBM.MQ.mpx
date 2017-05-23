@@ -1,29 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <TypeDefinitions>
-    <EntityTypes>
-      <ClassTypes>
-      </ClassTypes>
-      <RelationshipTypes>
-        <RelationshipType ID="IBM.MQ.QueueManagerHostingChannel" Accessibility="Internal" Abstract="false" Base="System!System.Hosting">
-          <Source ID="Source" Type="IBM.MQ.QueueManager" />
-          <Target ID="Target" Type="IBM.MQ.Channel" />
-        </RelationshipType>
-        <RelationshipType ID="IBM.MQ.QueueManagerHostingListener" Accessibility="Internal" Abstract="false" Base="System!System.Hosting">
-          <Source ID="Source" Type="IBM.MQ.QueueManager" />
-          <Target ID="Target" Type="IBM.MQ.Listener" />
-        </RelationshipType>
-        <RelationshipType ID="IBM.MQ.ServerHostingQueueManager" Accessibility="Internal" Abstract="false" Base="System!System.Hosting">
-          <Source ID="Source" Type="IBM.MQ.Server" />
-          <Target ID="Target" Type="IBM.MQ.QueueManager" />
-        </RelationshipType>
-        <RelationshipType ID="QueueManagerHostingQueue" Accessibility="Internal" Abstract="false" Base="System!System.Hosting">
-          <Source ID="Source" Type="IBM.MQ.QueueManager" />
-          <Target ID="Target" Type="IBM.MQ.Queue" />
-        </RelationshipType>
-      </RelationshipTypes>
-    </EntityTypes>
-  </TypeDefinitions>
   <Categories>
     <Category ID="Cat.IBM.MQ.QueueManager16" Target="IBM.MQ.QueueManager16" Value="System!System.Internal.ManagementPack.Images.u16x16Icon" />
     <Category ID="Cat.IBM.MQ.QueueManager80" Target="IBM.MQ.QueueManager80" Value="System!System.Internal.ManagementPack.Images.DiagramIcon" />
@@ -1011,7 +987,7 @@
         <Algorithm>WorstOf</Algorithm>
         <MemberUnAvailable>Error</MemberUnAvailable>
       </DependencyMonitor>
-      <DependencyMonitor ID="IBM.MQ.QueueManagerQueuesMonitor" Accessibility="Internal" Enabled="true" Target="IBM.MQ.QueueManager" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" RelationshipType="QueueManagerHostingQueue" MemberMonitor="Health!System.Health.EntityState">
+      <DependencyMonitor ID="IBM.MQ.QueueManagerQueuesMonitor" Accessibility="Internal" Enabled="true" Target="IBM.MQ.QueueManager" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" RelationshipType="IBM.MQ.QueueManagerHostingQueue" MemberMonitor="Health!System.Health.EntityState">
         <Category>Custom</Category>
         <Algorithm>WorstOf</Algorithm>
         <MemberUnAvailable>Error</MemberUnAvailable>
@@ -1238,12 +1214,7 @@ Adapted for customer environment by Samuel Tegenfeldt
           <Name>Queue Manager Discovery</Name>
           <Description>Discover Queue Managers</Description>
         </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueManagerHostingChannel">
-          <Name>QueueManagerHostingChannel</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueManagerHostingListener">
-          <Name>QueueManagerHostingListener</Name>
-        </DisplayString>
+
         <DisplayString ElementID="IBM.MQ.QueueManagerListenersMonitor">
           <Name>Listeners Overall Health</Name>
         </DisplayString>
@@ -1285,14 +1256,8 @@ Adapted for customer environment by Samuel Tegenfeldt
         <DisplayString ElementID="IBM.MQ.Server.Discovery">
           <Name>IBM MQ Server Discovery</Name>
         </DisplayString>
-        <DisplayString ElementID="IBM.MQ.ServerHostingQueueManager">
-          <Name>ServerHostingQueueManager</Name>
-        </DisplayString>
         <DisplayString ElementID="IBM.MQ.ServerState">
           <Name>Server State</Name>
-        </DisplayString>
-        <DisplayString ElementID="QueueManagerHostingQueue">
-          <Name>QueueManagerHostingQueue</Name>
         </DisplayString>
       </DisplayStrings>
     </LanguagePack>

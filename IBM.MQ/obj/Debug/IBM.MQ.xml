@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.1.5.41</Version>
+      <Version>3.2.0.0</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -80,13 +80,13 @@
           <Source ID="Source" Type="IBM.MQ.QueueManager" />
           <Target ID="Target" Type="IBM.MQ.Listener" />
         </RelationshipType>
+        <RelationshipType ID="IBM.MQ.QueueManagerHostingQueue" Accessibility="Internal" Abstract="false" Base="System!System.Hosting">
+          <Source ID="Source" Type="IBM.MQ.QueueManager" />
+          <Target ID="Target" Type="IBM.MQ.Queue" />
+        </RelationshipType>
         <RelationshipType ID="IBM.MQ.ServerHostingQueueManager" Accessibility="Internal" Abstract="false" Base="System!System.Hosting">
           <Source ID="Source" Type="IBM.MQ.Server" />
           <Target ID="Target" Type="IBM.MQ.QueueManager" />
-        </RelationshipType>
-        <RelationshipType ID="QueueManagerHostingQueue" Accessibility="Internal" Abstract="false" Base="System!System.Hosting">
-          <Source ID="Source" Type="IBM.MQ.QueueManager" />
-          <Target ID="Target" Type="IBM.MQ.Queue" />
         </RelationshipType>
       </RelationshipTypes>
     </EntityTypes>
@@ -119,69 +119,71 @@
           <SyncTime />
           <ScriptName>discoverChannel.vbs</ScriptName>
           <Arguments>$MPElement$ $Target/Id$ $Target/Host/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$ $Target/Property[Type="IBM.MQ.QueueManager"]/QueueManagerName$</Arguments>
-          <ScriptBody>Dim oAPI
+          <ScriptBody>
+            Dim oAPI
 
-Dim oArgs
-Set oArgs = WScript.Arguments
-' Check for the required script arguments.
-if oArgs.Count &lt; 2 Then
-    ' If the script is called without the required arguments,
-    ' create an information event and then quit.
-    Call oAPI.LogScriptEvent("discoverChannel.vbs",101,0, _
-        "script was called with fewer than three arguments and was not executed.")
-    Wscript.Quit -1
-End If
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            ' Check for the required script arguments.
+            if oArgs.Count &lt; 2 Then
+            ' If the script is called without the required arguments,
+            ' create an information event and then quit.
+            Call oAPI.LogScriptEvent("discoverChannel.vbs",101,0, _
+            "script was called with fewer than three arguments and was not executed.")
+            Wscript.Quit -1
+            End If
 
 
-Dim SourceID, ManagedEntityId, TargetComputer, QueueManagerName
+            Dim SourceID, ManagedEntityId, TargetComputer, QueueManagerName
 
-SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
-ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
-TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
-QueueManagerName = oArgs(3)
+            SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
+            ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
+            TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
+            QueueManagerName = oArgs(3)
 
-	Set oAPI = CreateObject("MOM.ScriptAPI")
-	Dim oDiscoveryData, oInst
-	Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
+            Set oAPI = CreateObject("MOM.ScriptAPI")
+            Dim oDiscoveryData, oInst
+            Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
 
-Set objShell = WScript.CreateObject("WScript.Shell")
-QueueCommand = "cmd /c echo Display channel(*) | runmqsc " &amp; QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
+            Set objShell = WScript.CreateObject("WScript.Shell")
+            QueueCommand = "cmd /c echo Display channel(*) | runmqsc " &amp; QueueManagerName
+            Set objExecObject = objShell.Exec(QueueCommand)
 
-Do While Not objExecObject.StdOut.AtEndOfStream
+            Do While Not objExecObject.StdOut.AtEndOfStream
 
-    	QueueText = objExecObject.StdOut.ReadLine()
+            QueueText = objExecObject.StdOut.ReadLine()
 
-	IF INSTR(QueueText, "CHANNEL(") THEN
-		MQTextArray = split(QueueText,")")
-		ChannelName = Replace(MQTextArray(0),"CHANNEL(","")
+            IF INSTR(QueueText, "CHANNEL(") THEN
+            MQTextArray = split(QueueText,")")
+            ChannelName = Replace(MQTextArray(0),"CHANNEL(","")
 
-    		' Discovered the application. Create the application instance.
-    		Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Channel']$")
-	    	' Define the property values for this instance. Available
-	    	' properties are determined by the Management Pack that
-	    	' defines the class.
+            ' Discovered the application. Create the application instance.
+            Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Channel']$")
+            ' Define the property values for this instance. Available
+            ' properties are determined by the Management Pack that
+            ' defines the class.
 
             Call oInst.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", TargetComputer)
-	    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Channel']/ChannelName$",ChannelName)
-	    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", QueueManagerName)
-	    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Channel']/QueueManagerName$", QueueManagerName)
-        	Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", ChannelName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Channel']/ChannelName$",ChannelName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", QueueManagerName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Channel']/QueueManagerName$", QueueManagerName)
+            Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", ChannelName)
 
 
-		Call oDiscoveryData.AddInstance(oInst)
+            Call oDiscoveryData.AddInstance(oInst)
 
-		' Submit the discovery data for processing.
-    		Call oAPI.LogScriptEvent("discoverQueue.vbs",10011,0,"New Channel: " &amp;ChannelName&amp; " Added to Discovery")
+            ' Submit the discovery data for processing.
+            Call oAPI.LogScriptEvent("discoverQueue.vbs",10011,0,"New Channel: " &amp;ChannelName&amp; " Added to Discovery")
 
-	END IF
+            END IF
 
-Loop
+            Loop
 
-	Call oAPI.Return(oDiscoveryData)
+            Call oAPI.Return(oDiscoveryData)
 
-	Set oDiscoveryData = nothing
-	Set oAPI = nothing</ScriptBody>
+            Set oDiscoveryData = nothing
+            Set oAPI = nothing
+          </ScriptBody>
           <TimeoutSeconds>300</TimeoutSeconds>
         </DataSource>
       </Discovery>
@@ -200,65 +202,66 @@ Loop
           <SyncTime />
           <ScriptName>DiscoverQueueProperties.vbs</ScriptName>
           <Arguments>$MPElement$ $Target/Id$ $Target/Host/Host/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-          <ScriptBody>Dim oAPI
-Dim oArgs
-Set oArgs = WScript.Arguments
-' Check for the required script arguments.
+          <ScriptBody>
+            Dim oAPI
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            ' Check for the required script arguments.
 
 
-FUNCTION getMqProperty(mqType, pName, Property, queueMgr)
- Set objShell = WScript.CreateObject("WScript.Shell")
- QueueCommand = "cmd /c echo Display "&amp;mqType&amp;"("&amp;pName&amp;") "&amp;Property&amp;" | runmqsc "&amp;queueMgr
- Set objExecObject = objShell.Exec(QueueCommand)
- Do While Not objExecObject.StdOut.AtEndOfStream
-  QueryText = objExecObject.StdOut.ReadLine()
-  IF INSTR(QueryText,Property&amp;"(") THEN
-   MqProperty =  QueryText
-   MqPropertyArray = split(MqProperty,Property&amp;"(")
-   MqPropertyArray2 = split(MqPropertyArray(1),")")
-   getMqProperty = MqPropertyArray2(0)
-   Exit Do
-  END IF
- Loop
-END Function
+            FUNCTION getMqProperty(mqType, pName, Property, queueMgr)
+            Set objShell = WScript.CreateObject("WScript.Shell")
+            QueueCommand = "cmd /c echo Display "&amp;mqType&amp;"("&amp;pName&amp;") "&amp;Property&amp;" | runmqsc "&amp;queueMgr
+            Set objExecObject = objShell.Exec(QueueCommand)
+            Do While Not objExecObject.StdOut.AtEndOfStream
+            QueryText = objExecObject.StdOut.ReadLine()
+            IF INSTR(QueryText,Property&amp;"(") THEN
+            MqProperty =  QueryText
+            MqPropertyArray = split(MqProperty,Property&amp;"(")
+            MqPropertyArray2 = split(MqPropertyArray(1),")")
+            getMqProperty = MqPropertyArray2(0)
+            Exit Do
+            END IF
+            Loop
+            END Function
 
 
-Dim QueueManagerName
+            Dim QueueManagerName
 
-SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
-ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
-TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
-QueueManagerName = oArgs(3)
-QueueName = oArgs(4)
+            SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
+            ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
+            TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
+            QueueManagerName = oArgs(3)
+            QueueName = oArgs(4)
 
-	Set oAPI = CreateObject("MOM.ScriptAPI")
-	Dim oDiscoveryData, oInst
-	Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
+            Set oAPI = CreateObject("MOM.ScriptAPI")
+            Dim oDiscoveryData, oInst
+            Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
 
 
-    	' Discovered the application. Create the application instance.
-    	Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Queue']$")
-   	' Define the property values for this instance. Available
-   	' properties are determined by the Management Pack that
-   	' defines the class.
+            ' Discovered the application. Create the application instance.
+            Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Queue']$")
+            ' Define the property values for this instance. Available
+            ' properties are determined by the Management Pack that
+            ' defines the class.
 
-	Call oInst.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", TargetComputer)
-	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/QueueName$",QueueName)
-	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/QueueManagerName$", QueueManagerName)
-	Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", QueueName)
+            Call oInst.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", TargetComputer)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/QueueName$",QueueName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/QueueManagerName$", QueueManagerName)
+            Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", QueueName)
 
-	' Discover Properties
-	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/TYPE$", getMqProperty("Queue", QueueName, "TYPE", QueueManagerName))
-	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/DESCR$", getMqProperty("Queue", QueueName, "DESCR", QueueManagerName))
-	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/MAXDEPTH$", getMqProperty("Queue", QueueName, "MAXDEPTH", QueueManagerName))
-	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/MAXMSGL$", getMqProperty("Queue", QueueName, "MAXMSGL", QueueManagerName))
+            ' Discover Properties
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/TYPE$", getMqProperty("Queue", QueueName, "TYPE", QueueManagerName))
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/DESCR$", getMqProperty("Queue", QueueName, "DESCR", QueueManagerName))
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/MAXDEPTH$", getMqProperty("Queue", QueueName, "MAXDEPTH", QueueManagerName))
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/MAXMSGL$", getMqProperty("Queue", QueueName, "MAXMSGL", QueueManagerName))
 
-	Call oDiscoveryData.AddInstance(oInst)
-	Call oAPI.Return(oDiscoveryData)
+            Call oDiscoveryData.AddInstance(oInst)
+            Call oAPI.Return(oDiscoveryData)
 
-	Set oDiscoveryData = nothing
-	Set oAPI = nothing
-</ScriptBody>
+            Set oDiscoveryData = nothing
+            Set oAPI = nothing
+          </ScriptBody>
           <TimeoutSeconds>60</TimeoutSeconds>
         </DataSource>
       </Discovery>
@@ -281,68 +284,70 @@ QueueName = oArgs(4)
           <SyncTime />
           <ScriptName>discoverListener.vbs</ScriptName>
           <Arguments>$MPElement$ $Target/Id$ $Target/Host/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$ $Target/Property[Type="IBM.MQ.QueueManager"]/QueueManagerName$</Arguments>
-          <ScriptBody>Dim oAPI
+          <ScriptBody>
+            Dim oAPI
 
-Dim oArgs
-Set oArgs = WScript.Arguments
-' Check for the required script arguments.
-if oArgs.Count &lt; 2 Then
-    ' If the script is called without the required arguments,
-    ' create an information event and then quit.
-    Call oAPI.LogScriptEvent("discoverListener.vbs",101,0, _
-        "script was called with fewer than three arguments and was not executed.")
-    Wscript.Quit -1
-End If
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            ' Check for the required script arguments.
+            if oArgs.Count &lt; 2 Then
+            ' If the script is called without the required arguments,
+            ' create an information event and then quit.
+            Call oAPI.LogScriptEvent("discoverListener.vbs",101,0, _
+            "script was called with fewer than three arguments and was not executed.")
+            Wscript.Quit -1
+            End If
 
-Dim SourceID, ManagedEntityId, TargetComputer, QueueManagerName
+            Dim SourceID, ManagedEntityId, TargetComputer, QueueManagerName
 
-SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
-ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
-TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
-QueueManagerName = oArgs(3)
+            SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
+            ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
+            TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
+            QueueManagerName = oArgs(3)
 
-	Set oAPI = CreateObject("MOM.ScriptAPI")
-	Dim oDiscoveryData, oInst
-	Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
+            Set oAPI = CreateObject("MOM.ScriptAPI")
+            Dim oDiscoveryData, oInst
+            Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
 
-Set objShell = WScript.CreateObject("WScript.Shell")
-QueueCommand = "cmd /c echo Display listener(*) | runmqsc " &amp; QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
+            Set objShell = WScript.CreateObject("WScript.Shell")
+            QueueCommand = "cmd /c echo Display listener(*) | runmqsc " &amp; QueueManagerName
+            Set objExecObject = objShell.Exec(QueueCommand)
 
-Do While Not objExecObject.StdOut.AtEndOfStream
+            Do While Not objExecObject.StdOut.AtEndOfStream
 
-    	QueueText = objExecObject.StdOut.ReadLine()
+            QueueText = objExecObject.StdOut.ReadLine()
 
-	IF INSTR(QueueText, "LISTENER(") THEN
-		MQTextArray = split(QueueText,")")
-		ListenerName= Replace(MQTextArray(0),"LISTENER(","")
+            IF INSTR(QueueText, "LISTENER(") THEN
+            MQTextArray = split(QueueText,")")
+            ListenerName= Replace(MQTextArray(0),"LISTENER(","")
 
-    		' Discovered the application. Create the application instance.
-    		Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Listener']$")
-	    	' Define the property values for this instance. Available
-	    	' properties are determined by the Management Pack that
-	    	' defines the class.
+            ' Discovered the application. Create the application instance.
+            Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Listener']$")
+            ' Define the property values for this instance. Available
+            ' properties are determined by the Management Pack that
+            ' defines the class.
 
             Call oInst.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", TargetComputer)
-	    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Listener']/ListenerName$",ListenerName)
-	    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", QueueManagerName)
-	    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Listener']/QueueManagerName$", QueueManagerName)
-        	Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", ListenerName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Listener']/ListenerName$",ListenerName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", QueueManagerName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Listener']/QueueManagerName$", QueueManagerName)
+            Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", ListenerName)
 
 
-		Call oDiscoveryData.AddInstance(oInst)
+            Call oDiscoveryData.AddInstance(oInst)
 
-		' Submit the discovery data for processing.
-    		Call oAPI.LogScriptEvent("discoverListener.vbs",10011,0,"Listener: " &amp;ListenerName&amp; " Added to Discovery")
+            ' Submit the discovery data for processing.
+            Call oAPI.LogScriptEvent("discoverListener.vbs",10011,0,"Listener: " &amp;ListenerName&amp; " Added to Discovery")
 
-	END IF
+            END IF
 
-Loop
+            Loop
 
-	Call oAPI.Return(oDiscoveryData)
+            Call oAPI.Return(oDiscoveryData)
 
-	Set oDiscoveryData = nothing
-	Set oAPI = nothing</ScriptBody>
+            Set oDiscoveryData = nothing
+            Set oAPI = nothing
+          </ScriptBody>
           <TimeoutSeconds>300</TimeoutSeconds>
         </DataSource>
       </Discovery>
@@ -360,68 +365,69 @@ Loop
           <SyncTime />
           <ScriptName>discoverQueue.vbs</ScriptName>
           <Arguments>$MPElement$ $Target/Id$ $Target/Host/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$ $Target/Property[Type="IBM.MQ.QueueManager"]/QueueManagerName$</Arguments>
-          <ScriptBody>Dim oAPI
-Dim oArgs
-Set oArgs = WScript.Arguments
-' Check for the required script arguments.
-if oArgs.Count &lt; 2 Then
-    ' If the script is called without the required arguments,
-    ' create an information event and then quit.
-    Call oAPI.LogScriptEvent("discoverQueue.vbs",101,0, _
-        "script was called with fewer than three arguments and was not executed.")
-    Wscript.Quit -1
-End If
+          <ScriptBody>
+            Dim oAPI
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            ' Check for the required script arguments.
+            if oArgs.Count &lt; 2 Then
+            ' If the script is called without the required arguments,
+            ' create an information event and then quit.
+            Call oAPI.LogScriptEvent("discoverQueue.vbs",101,0, _
+            "script was called with fewer than three arguments and was not executed.")
+            Wscript.Quit -1
+            End If
 
-Dim SourceID, ManagedEntityId, TargetComputer, QueueManagerName
+            Dim SourceID, ManagedEntityId, TargetComputer, QueueManagerName
 
-SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
-ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
-TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
-QueueManagerName = oArgs(3)
+            SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
+            ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
+            TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
+            QueueManagerName = oArgs(3)
 
-	Set oAPI = CreateObject("MOM.ScriptAPI")
-	Dim oDiscoveryData, oInst
-	Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
+            Set oAPI = CreateObject("MOM.ScriptAPI")
+            Dim oDiscoveryData, oInst
+            Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
 
-Set objShell = WScript.CreateObject("WScript.Shell")
-QueueCommand = "cmd /c echo Display QL(*) | runmqsc " &amp; QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
+            Set objShell = WScript.CreateObject("WScript.Shell")
+            QueueCommand = "cmd /c echo Display QL(*) | runmqsc " &amp; QueueManagerName
+            Set objExecObject = objShell.Exec(QueueCommand)
 
-Do While Not objExecObject.StdOut.AtEndOfStream
+            Do While Not objExecObject.StdOut.AtEndOfStream
 
-    	QueueText = objExecObject.StdOut.ReadLine()
+            QueueText = objExecObject.StdOut.ReadLine()
 
-	IF INSTR(QueueText, "QUEUE(") THEN
-		MQTextArray = split(QueueText,")")
-		QueueName = Replace(MQTextArray(0),"QUEUE(","")
+            IF INSTR(QueueText, "QUEUE(") THEN
+            MQTextArray = split(QueueText,")")
+            QueueName = Replace(MQTextArray(0),"QUEUE(","")
 
-    		' Discovered the application. Create the application instance.
-    		Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Queue']$")
-	    	' Define the property values for this instance. Available
-	    	' properties are determined by the Management Pack that
-	    	' defines the class.
+            ' Discovered the application. Create the application instance.
+            Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Queue']$")
+            ' Define the property values for this instance. Available
+            ' properties are determined by the Management Pack that
+            ' defines the class.
 
             Call oInst.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", TargetComputer)
-	    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/QueueName$",QueueName)
-	    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", QueueManagerName)
-	    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/QueueManagerName$", QueueManagerName)
-        	Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", QueueName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/QueueName$",QueueName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", QueueManagerName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Queue']/QueueManagerName$", QueueManagerName)
+            Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", QueueName)
 
-		Call oDiscoveryData.AddInstance(oInst)
+            Call oDiscoveryData.AddInstance(oInst)
 
-		' Submit the discovery data for processing.
-    		Call oAPI.LogScriptEvent("discoverQueue.vbs",10011,0,"New Queue: " &amp;QueueName&amp; " Added to Discovery")
+            ' Submit the discovery data for processing.
+            Call oAPI.LogScriptEvent("discoverQueue.vbs",10011,0,"New Queue: " &amp;QueueName&amp; " Added to Discovery")
 
-	END IF
+            END IF
 
-Loop
+            Loop
 
-	Call oAPI.Return(oDiscoveryData)
+            Call oAPI.Return(oDiscoveryData)
 
-	Set oDiscoveryData = nothing
-	Set oAPI = nothing
+            Set oDiscoveryData = nothing
+            Set oAPI = nothing
 
-</ScriptBody>
+          </ScriptBody>
           <TimeoutSeconds>60</TimeoutSeconds>
         </DataSource>
       </Discovery>
@@ -438,62 +444,63 @@ Loop
           <SyncTime />
           <ScriptName>discoverQueueManager.vbs</ScriptName>
           <Arguments>$MPElement$ $Target/Id$ $Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Arguments>
-          <ScriptBody>Dim oAPI
+          <ScriptBody>
+            Dim oAPI
 
 
-Dim oArgs
-Set oArgs = WScript.Arguments
-' Check for the required script arguments.
-if oArgs.Count &lt; 3 Then
-    ' If the script is called without the required arguments,
-    ' create an information event and then quit.
-    Call oAPI.LogScriptEvent("DiscoverMqManager.vbs",101,0, _
-        "script was called with fewer than three arguments and was not executed.")
-    Wscript.Quit -1
-End If
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            ' Check for the required script arguments.
+            if oArgs.Count &lt; 3 Then
+            ' If the script is called without the required arguments,
+            ' create an information event and then quit.
+            Call oAPI.LogScriptEvent("DiscoverMqManager.vbs",101,0, _
+            "script was called with fewer than three arguments and was not executed.")
+            Wscript.Quit -1
+            End If
 
-Dim SourceID, ManagedEntityId, TargetComputer
+            Dim SourceID, ManagedEntityId, TargetComputer
 
-SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
-ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
-TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
+            SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
+            ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
+            TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
 
-	Set oAPI = CreateObject("MOM.ScriptAPI")
-	Dim oDiscoveryData, oInst
-	Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
+            Set oAPI = CreateObject("MOM.ScriptAPI")
+            Dim oDiscoveryData, oInst
+            Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
 
-Set objShell = WScript.CreateObject("WScript.Shell")
-Set objExecObject = objShell.Exec("dspmq")
+            Set objShell = WScript.CreateObject("WScript.Shell")
+            Set objExecObject = objShell.Exec("dspmq")
 
-Do While Not objExecObject.StdOut.AtEndOfStream
+            Do While Not objExecObject.StdOut.AtEndOfStream
 
-    	MQText = objExecObject.StdOut.ReadLine()
-    	MQTextArray = split(MQText,")")
-    	MQName = Replace(MQTextArray(0),"QMNAME(","")
-    	'wscript.echo MQName
+            MQText = objExecObject.StdOut.ReadLine()
+            MQTextArray = split(MQText,")")
+            MQName = Replace(MQTextArray(0),"QMNAME(","")
+            'wscript.echo MQName
 
-    	' Discovered the application. Create the application instance.
-    	Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.QueueManager']$")
+            ' Discovered the application. Create the application instance.
+            Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.QueueManager']$")
 
-    	' Define the property values for this instance. Available
-    	' properties are determined by the Management Pack that
-    	' defines the class.
-    	Call oInst.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", TargetComputer)
-    	Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", MQName )
-	Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", MQName )
+            ' Define the property values for this instance. Available
+            ' properties are determined by the Management Pack that
+            ' defines the class.
+            Call oInst.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", TargetComputer)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", MQName )
+            Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", MQName )
 
-    	Call oDiscoveryData.AddInstance(oInst)
+            Call oDiscoveryData.AddInstance(oInst)
 
-	' Submit the discovery data for processing.
+            ' Submit the discovery data for processing.
 
-Loop
+            Loop
 
-	Call oAPI.Return(oDiscoveryData)
+            Call oAPI.Return(oDiscoveryData)
 
-	Set oDiscoveryData = nothing
-	Set oAPI = nothing
+            Set oDiscoveryData = nothing
+            Set oAPI = nothing
 
-</ScriptBody>
+          </ScriptBody>
           <TimeoutSeconds>300</TimeoutSeconds>
         </DataSource>
       </Discovery>
@@ -594,31 +601,33 @@ Call oAPI.Return(oBag)]]></ScriptBody>
             <SyncTime />
             <ScriptName>CollectIPPROCS.vbs</ScriptName>
             <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName, QueueName
-QueueManagerName= oArgs(0)
-QueueName = oArgs(1)
+            <ScriptBody>
+              Dim oArgs
+              Set oArgs = WScript.Arguments
+              Dim QueueManagerName, QueueName
+              QueueManagerName= oArgs(0)
+              QueueName = oArgs(1)
 
-IPPROCS = 0
+              IPPROCS = 0
 
-Set objShell = WScript.CreateObject("WScript.Shell")
-QueueCommand = "cmd /c echo Display Queue("&amp;QueueName&amp;") IPPROCS | runmqsc "&amp;QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
+              Set objShell = WScript.CreateObject("WScript.Shell")
+              QueueCommand = "cmd /c echo Display Queue("&amp;QueueName&amp;") IPPROCS | runmqsc "&amp;QueueManagerName
+              Set objExecObject = objShell.Exec(QueueCommand)
 
-Do While Not objExecObject.StdOut.AtEndOfStream
-    MQText = objExecObject.StdOut.ReadLine()
-    IF INSTR(MQText,"IPPROCS(") THEN
-     StatusArray =  Split(MQText, "IPPROCS(")
-     IPPROCS= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
-    END IF
-Loop
+              Do While Not objExecObject.StdOut.AtEndOfStream
+              MQText = objExecObject.StdOut.ReadLine()
+              IF INSTR(MQText,"IPPROCS(") THEN
+              StatusArray =  Split(MQText, "IPPROCS(")
+              IPPROCS= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
+              END IF
+              Loop
 
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("PerfValue",IPPROCS)
-Call oAPI.Return(oBag)</ScriptBody>
+              Dim oAPI, oBag
+              Set oAPI = CreateObject("MOM.ScriptAPI")
+              Set oBag = oAPI.CreatePropertyBag()
+              Call oBag.AddValue("PerfValue",IPPROCS)
+              Call oAPI.Return(oBag)
+            </ScriptBody>
             <TimeoutSeconds>60</TimeoutSeconds>
             <ObjectName>Queue</ObjectName>
             <CounterName>IPPROCS</CounterName>
@@ -639,31 +648,33 @@ Call oAPI.Return(oBag)</ScriptBody>
             <SyncTime />
             <ScriptName>CollectQueueOPPROCS.vbs</ScriptName>
             <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName, QueueName
-QueueManagerName= oArgs(0)
-QueueName = oArgs(1)
+            <ScriptBody>
+              Dim oArgs
+              Set oArgs = WScript.Arguments
+              Dim QueueManagerName, QueueName
+              QueueManagerName= oArgs(0)
+              QueueName = oArgs(1)
 
-OPPROCS = 0
+              OPPROCS = 0
 
-Set objShell = WScript.CreateObject("WScript.Shell")
- QueueCommand = "cmd /c echo Display Queue("&amp;QueueName&amp;") OPPROCS | runmqsc "&amp;QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
+              Set objShell = WScript.CreateObject("WScript.Shell")
+              QueueCommand = "cmd /c echo Display Queue("&amp;QueueName&amp;") OPPROCS | runmqsc "&amp;QueueManagerName
+              Set objExecObject = objShell.Exec(QueueCommand)
 
-Do While Not objExecObject.StdOut.AtEndOfStream
-    MQText = objExecObject.StdOut.ReadLine()
-    IF INSTR(MQText,"OPPROCS(") THEN
-     StatusArray =  Split(MQText, "OPPROCS(")
-     OPPROCS= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
-    END IF
-Loop
+              Do While Not objExecObject.StdOut.AtEndOfStream
+              MQText = objExecObject.StdOut.ReadLine()
+              IF INSTR(MQText,"OPPROCS(") THEN
+              StatusArray =  Split(MQText, "OPPROCS(")
+              OPPROCS= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
+              END IF
+              Loop
 
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("PerfValue",OPPROCS)
-Call oAPI.Return(oBag)</ScriptBody>
+              Dim oAPI, oBag
+              Set oAPI = CreateObject("MOM.ScriptAPI")
+              Set oBag = oAPI.CreatePropertyBag()
+              Call oBag.AddValue("PerfValue",OPPROCS)
+              Call oAPI.Return(oBag)
+            </ScriptBody>
             <TimeoutSeconds>60</TimeoutSeconds>
             <ObjectName>Queue</ObjectName>
             <CounterName>OPPROCS</CounterName>
@@ -684,31 +695,33 @@ Call oAPI.Return(oBag)</ScriptBody>
             <SyncTime />
             <ScriptName>CollectCURDEPTH.vbs</ScriptName>
             <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName, QueueName
-QueueManagerName= oArgs(0)
-QueueName = oArgs(1)
+            <ScriptBody>
+              Dim oArgs
+              Set oArgs = WScript.Arguments
+              Dim QueueManagerName, QueueName
+              QueueManagerName= oArgs(0)
+              QueueName = oArgs(1)
 
-CURDEPTH = 0
+              CURDEPTH = 0
 
-Set objShell = WScript.CreateObject("WScript.Shell")
- QueueCommand = "cmd /c echo Display Queue("&amp;QueueName&amp;") CURDEPTH| runmqsc "&amp;QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
+              Set objShell = WScript.CreateObject("WScript.Shell")
+              QueueCommand = "cmd /c echo Display Queue("&amp;QueueName&amp;") CURDEPTH| runmqsc "&amp;QueueManagerName
+              Set objExecObject = objShell.Exec(QueueCommand)
 
-Do While Not objExecObject.StdOut.AtEndOfStream
-    MQText = objExecObject.StdOut.ReadLine()
-    IF INSTR(MQText,"CURDEPTH(") THEN
-     StatusArray =  Split(MQText, "CURDEPTH(")
-     CURDEPTH= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
-    END IF
-Loop
+              Do While Not objExecObject.StdOut.AtEndOfStream
+              MQText = objExecObject.StdOut.ReadLine()
+              IF INSTR(MQText,"CURDEPTH(") THEN
+              StatusArray =  Split(MQText, "CURDEPTH(")
+              CURDEPTH= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
+              END IF
+              Loop
 
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("PerfValue",CURDEPTH)
-Call oAPI.Return(oBag)</ScriptBody>
+              Dim oAPI, oBag
+              Set oAPI = CreateObject("MOM.ScriptAPI")
+              Set oBag = oAPI.CreatePropertyBag()
+              Call oBag.AddValue("PerfValue",CURDEPTH)
+              Call oAPI.Return(oBag)
+            </ScriptBody>
             <TimeoutSeconds>60</TimeoutSeconds>
             <ObjectName>Queue</ObjectName>
             <CounterName>CURDEPTH</CounterName>
@@ -760,37 +773,39 @@ Call oAPI.Return(oBag)</ScriptBody>
           <SyncTime />
           <ScriptName>ChannelStatusMonitor.vbs</ScriptName>
           <Arguments>$Target/Property[Type="IBM.MQ.Channel"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Channel"]/ChannelName$</Arguments>
-          <ScriptBody>Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName
-QueueManagerName= oArgs(0)
-ChannelName= oArgs(1)
+          <ScriptBody>
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            Dim QueueManagerName
+            QueueManagerName= oArgs(0)
+            ChannelName= oArgs(1)
 
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
+            Dim oAPI, oBag
+            Set oAPI = CreateObject("MOM.ScriptAPI")
 
-Set objShell = WScript.CreateObject("WScript.Shell")
+            Set objShell = WScript.CreateObject("WScript.Shell")
 
-Status = "Not Available"
+            Status = "Not Available"
 
-QueueCommand = "cmd /c echo Display chs("&amp;ChannelName&amp;") | runmqsc "&amp;QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
+            QueueCommand = "cmd /c echo Display chs("&amp;ChannelName&amp;") | runmqsc "&amp;QueueManagerName
+            Set objExecObject = objShell.Exec(QueueCommand)
 
-Do While Not objExecObject.StdOut.AtEndOfStream
-    MQText = objExecObject.StdOut.ReadLine()
-    IF INSTR(MQText,"STATUS(") THEN
-     StatusArray =  Split(MQText, "STATUS(")
-     StatusArray2 =  Split(StatusArray(1), ")")
-     Status = StatusArray2(0)
-     Exit do
-    END IF
-Loop
+            Do While Not objExecObject.StdOut.AtEndOfStream
+            MQText = objExecObject.StdOut.ReadLine()
+            IF INSTR(MQText,"STATUS(") THEN
+            StatusArray =  Split(MQText, "STATUS(")
+            StatusArray2 =  Split(StatusArray(1), ")")
+            Status = StatusArray2(0)
+            Exit do
+            END IF
+            Loop
 
-'wscript.echo Status
+            'wscript.echo Status
 
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("Status",Status)
-Call oAPI.Return(oBag)</ScriptBody>
+            Set oBag = oAPI.CreatePropertyBag()
+            Call oBag.AddValue("Status",Status)
+            Call oAPI.Return(oBag)
+          </ScriptBody>
           <TimeoutSeconds>120</TimeoutSeconds>
           <ErrorExpression>
             <And>
@@ -891,35 +906,36 @@ Call oAPI.Return(oBag)</ScriptBody>
           <SyncTime />
           <ScriptName>ListenerStatusMonitor.vbs</ScriptName>
           <Arguments>$Target/Property[Type="IBM.MQ.Listener"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Listener"]/ListenerName$</Arguments>
-          <ScriptBody>Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName
-QueueManagerName= oArgs(0)
-ListenerName= oArgs(1)
+          <ScriptBody>
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            Dim QueueManagerName
+            QueueManagerName= oArgs(0)
+            ListenerName= oArgs(1)
 
-Status = "Not Available"
+            Status = "Not Available"
 
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
-Set objShell = WScript.CreateObject("WScript.Shell")
+            Dim oAPI, oBag
+            Set oAPI = CreateObject("MOM.ScriptAPI")
+            Set objShell = WScript.CreateObject("WScript.Shell")
 
-QueueCommand = "cmd /c echo dis lsstatus("&amp;ListenerName&amp;") | runmqsc "&amp;QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
+            QueueCommand = "cmd /c echo dis lsstatus("&amp;ListenerName&amp;") | runmqsc "&amp;QueueManagerName
+            Set objExecObject = objShell.Exec(QueueCommand)
 
-Do While Not objExecObject.StdOut.AtEndOfStream
-    MQText = objExecObject.StdOut.ReadLine()
-    IF INSTR(MQText,"STATUS(") THEN
-     StatusArray =  Split(MQText, "STATUS(")
-     StatusArray2 =  Split(StatusArray(1), ")")
-     Status = StatusArray2(0)
-     Exit do
-    END IF
-Loop
+            Do While Not objExecObject.StdOut.AtEndOfStream
+            MQText = objExecObject.StdOut.ReadLine()
+            IF INSTR(MQText,"STATUS(") THEN
+            StatusArray =  Split(MQText, "STATUS(")
+            StatusArray2 =  Split(StatusArray(1), ")")
+            Status = StatusArray2(0)
+            Exit do
+            END IF
+            Loop
 
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("Status",Status)
-Call oAPI.Return(oBag)
-</ScriptBody>
+            Set oBag = oAPI.CreatePropertyBag()
+            Call oBag.AddValue("Status",Status)
+            Call oAPI.Return(oBag)
+          </ScriptBody>
           <TimeoutSeconds>60</TimeoutSeconds>
           <ErrorExpression>
             <SimpleExpression>
@@ -1048,32 +1064,33 @@ Call oAPI.Return(oBag)]]></ScriptBody>
           <SyncTime />
           <ScriptName>QueueManagerStatusMonitor.vbs</ScriptName>
           <Arguments>$Target/Property[Type="IBM.MQ.QueueManager"]/QueueManagerName$</Arguments>
-          <ScriptBody>Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName
-QueueManagerName= oArgs(0)
+          <ScriptBody>
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            Dim QueueManagerName
+            QueueManagerName= oArgs(0)
 
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
+            Dim oAPI, oBag
+            Set oAPI = CreateObject("MOM.ScriptAPI")
 
-Status = "Not Available"
+            Status = "Not Available"
 
-Set objShell = WScript.CreateObject("WScript.Shell")
-Set objExecObject = objShell.Exec("dspmq -m "&amp;QueueManagerName&amp;" -s")
+            Set objShell = WScript.CreateObject("WScript.Shell")
+            Set objExecObject = objShell.Exec("dspmq -m "&amp;QueueManagerName&amp;" -s")
 
-Do While Not objExecObject.StdOut.AtEndOfStream
-    MQText = objExecObject.StdOut.ReadLine()
-    IF INSTR(MQText,"STATUS(") THEN
-     StatusArray =  Split(MQText, "STATUS(")
-     Status = REPLACE(StatusArray(1),")","")
-     Exit do
-    END IF
-Loop
+            Do While Not objExecObject.StdOut.AtEndOfStream
+            MQText = objExecObject.StdOut.ReadLine()
+            IF INSTR(MQText,"STATUS(") THEN
+            StatusArray =  Split(MQText, "STATUS(")
+            Status = REPLACE(StatusArray(1),")","")
+            Exit do
+            END IF
+            Loop
 
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("Status",Status)
-Call oAPI.Return(oBag)
-              </ScriptBody>
+            Set oBag = oAPI.CreatePropertyBag()
+            Call oBag.AddValue("Status",Status)
+            Call oAPI.Return(oBag)
+          </ScriptBody>
           <TimeoutSeconds>60</TimeoutSeconds>
           <ErrorExpression>
             <SimpleExpression>
@@ -1208,7 +1225,7 @@ Call oAPI.Return(oBag)]]></ScriptBody>
         <Algorithm>WorstOf</Algorithm>
         <MemberUnAvailable>Error</MemberUnAvailable>
       </DependencyMonitor>
-      <DependencyMonitor ID="IBM.MQ.QueueManagerQueuesMonitor" Accessibility="Internal" Enabled="true" Target="IBM.MQ.QueueManager" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" RelationshipType="QueueManagerHostingQueue" MemberMonitor="Health!System.Health.EntityState">
+      <DependencyMonitor ID="IBM.MQ.QueueManagerQueuesMonitor" Accessibility="Internal" Enabled="true" Target="IBM.MQ.QueueManager" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" RelationshipType="IBM.MQ.QueueManagerHostingQueue" MemberMonitor="Health!System.Health.EntityState">
         <Category>Custom</Category>
         <Algorithm>WorstOf</Algorithm>
         <MemberUnAvailable>Error</MemberUnAvailable>
@@ -1282,13 +1299,6 @@ Call oAPI.Return(oBag)]]></ScriptBody>
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="IBM.MQ">
-          <Name>IBM MQ</Name>
-          <Description>Monitoring Pack for IBM WebSphere MQ.
-
-Author: Mohammad Falah Damati
-25.7.2013</Description>
-        </DisplayString>
         <DisplayString ElementID="IBM.MQ.Channel">
           <Name>Channel</Name>
         </DisplayString>
@@ -1322,6 +1332,71 @@ Author: Mohammad Falah Damati
         <DisplayString ElementID="IBM.MQ.Channel" SubElementID="USEDLQ">
           <Name>USEDLQ</Name>
         </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener">
+          <Name>Listener</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="CONTROL">
+          <Name>CONTROL</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="DESCR">
+          <Name>Description</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="IPADDR">
+          <Name>IPADDR</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="ListenerName">
+          <Name>Listener Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="PORT">
+          <Name>PORT</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="QueueManagerName">
+          <Name>Queue Manager Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="TRPTYPE">
+          <Name>TRPTYPE</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue">
+          <Name>Queue</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="DESCR">
+          <Name>Description</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="MAXDEPTH">
+          <Name>MAXDEPTH</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="MAXMSGL">
+          <Name>MAXMSGL</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="QueueManagerName">
+          <Name>Queue Manager Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="QueueName">
+          <Name>Queue Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="TYPE">
+          <Name>TYPE</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueManager">
+          <Name>Queue Manager</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueManager" SubElementID="QueueManagerName">
+          <Name>Queue Manager Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Server">
+          <Name>IBM MQ Server</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ">
+          <Name>IBM MQ</Name>
+          <Description>
+            Monitoring Pack for IBM WebSphere MQ.
+
+Original Author: Mohammad Falah Damati - 25.7.2013
+
+Adapted for customer environment by Samuel Tegenfeldt
+
+          </Description>
+        </DisplayString>
         <DisplayString ElementID="IBM.MQ.Channel.Folder">
           <Name>Channels</Name>
         </DisplayString>
@@ -1346,13 +1421,15 @@ Author: Mohammad Falah Damati
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.ChanneStatusMonitor_AlertMessageResourceID">
           <Name>IBM MQ Channel Status</Name>
-          <Description>IBM MQ Channel Status is not Running.
+          <Description>
+            IBM MQ Channel Status is not Running.
 
-Channel Status: {0}
-Channel Name: {1}
-Queue Manager Name: {2}
-Host Name:
-{3}</Description>
+            Channel Status: {0}
+            Channel Name: {1}
+            Queue Manager Name: {2}
+            Host Name:
+            {3}
+          </Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.DiscoverQueueProperties">
           <Name>DiscoverQueueProperties</Name>
@@ -1361,30 +1438,6 @@ Host Name:
         <DisplayString ElementID="IBM.MQ.Folder">
           <Name>IBM MQ</Name>
           <Description />
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Listener">
-          <Name>Listener</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="CONTROL">
-          <Name>CONTROL</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="DESCR">
-          <Name>Description</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="IPADDR">
-          <Name>IPADDR</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="ListenerName">
-          <Name>Listener Name</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="PORT">
-          <Name>PORT</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="QueueManagerName">
-          <Name>Queue Manager Name</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="TRPTYPE">
-          <Name>TRPTYPE</Name>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.ListenerDiscvoery">
           <Name>Discover Listener</Name>
@@ -1414,13 +1467,14 @@ Host Name:
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.ListenerStatusMonitor_AlertMessageResourceID">
           <Name>IBM MQ Listener Status is Not Running</Name>
-          <Description>IBM MQ Listener Status is not Running.
+          <Description>
+            IBM MQ Listener Status is not Running.
 
-Listener Status: {0}
-Listener Name: {1}
-Queue Manager Name: {2}
-Host Name: {3}
-</Description>
+            Listener Status: {0}
+            Listener Name: {1}
+            Queue Manager Name: {2}
+            Host Name: {3}
+          </Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.MQ_Installation1.ServiceMonitor">
           <Name>MQ_Installation1 Service</Name>
@@ -1435,27 +1489,6 @@ Host Name: {3}
         <DisplayString ElementID="IBM.MQ.MQ_Installation1.ServiceMonitor_AlertMessageResourceID">
           <Name>MQ_Installation1 Service not running on $Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetbiosComputerName$.</Name>
           <Description>IBM WebSphere MQ (Installation1) Service Not running on server {0}.</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue">
-          <Name>Queue</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="DESCR">
-          <Name>Description</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="MAXDEPTH">
-          <Name>MAXDEPTH</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="MAXMSGL">
-          <Name>MAXMSGL</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="QueueManagerName">
-          <Name>Queue Manager Name</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="QueueName">
-          <Name>Queue Name</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="TYPE">
-          <Name>TYPE</Name>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.Queue.CollectIPPROCS">
           <Name>IPPROCS</Name>
@@ -1475,10 +1508,12 @@ Host Name: {3}
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor_AlertMessageResourceID">
           <Name>IBM MQ Alert: Queue Depth and IPPROCS</Name>
-          <Description>Queue depth is increasing while no messgaes being processed. find out detailed information of this monitor.
+          <Description>
+            Queue depth is increasing while no messgaes being processed. find out detailed information of this monitor.
 
-Queue Name: {0}
-Queue Manager Name: {1}</Description>
+            Queue Name: {0}
+            Queue Manager Name: {1}
+          </Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.Queue.IPPROCS.Monitor">
           <Name>IPPROCS</Name>
@@ -1494,24 +1529,12 @@ Queue Manager Name: {1}</Description>
           <Name>QueueDiscvoery</Name>
           <Description>discover Queues</Description>
         </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueManager">
-          <Name>Queue Manager</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueManager" SubElementID="QueueManagerName">
-          <Name>Queue Manager Name</Name>
-        </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueManagerChannelsMonitor">
           <Name>Channels Overall Health</Name>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueManagerDiscovery">
           <Name>Queue Manager Discovery</Name>
           <Description>Discover Queue Managers</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueManagerHostingChannel">
-          <Name>QueueManagerHostingChannel</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueManagerHostingListener">
-          <Name>QueueManagerHostingListener</Name>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueManagerListenersMonitor">
           <Name>Listeners Overall Health</Name>
@@ -1534,11 +1557,13 @@ Queue Manager Name: {1}</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueManagerStatusMonitor_AlertMessageResourceID">
           <Name>IBM Queue Manager Status is Not Running</Name>
-          <Description>IBM Queue Manager Status is not Running.
+          <Description>
+            IBM Queue Manager Status is not Running.
 
-Status: {0}
-Queue Manager Name: {1}
-Host Name: {2}</Description>
+            Status: {0}
+            Queue Manager Name: {1}
+            Host Name: {2}
+          </Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueuePerformanceCollection">
           <Name>Performance</Name>
@@ -1549,20 +1574,11 @@ Host Name: {2}</Description>
         <DisplayString ElementID="IBM.MQ.QueueState">
           <Name>Queues</Name>
         </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Server">
-          <Name>IBM MQ Server</Name>
-        </DisplayString>
         <DisplayString ElementID="IBM.MQ.Server.Discovery">
           <Name>IBM MQ Server Discovery</Name>
         </DisplayString>
-        <DisplayString ElementID="IBM.MQ.ServerHostingQueueManager">
-          <Name>ServerHostingQueueManager</Name>
-        </DisplayString>
         <DisplayString ElementID="IBM.MQ.ServerState">
           <Name>Server State</Name>
-        </DisplayString>
-        <DisplayString ElementID="QueueManagerHostingQueue">
-          <Name>QueueManagerHostingQueue</Name>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.CurrentQueueDepth">
           <Name>MQ Queue Current Depth Monitor</Name>
@@ -1586,6 +1602,18 @@ Please see Alert Context for more information.</Description>
         <DisplayString ElementID="IBM.MQ.CurrentQueueDepth" SubElementID="Success">
           <Name>OK</Name>
           <Description>OK</Description>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueManagerHostingChannel">
+          <Name>QueueManagerHostingChannel</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueManagerHostingListener">
+          <Name>QueueManagerHostingListener</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueManagerHostingQueue">
+          <Name>IBM MQ QueueManagerHostingQueue</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.ServerHostingQueueManager">
+          <Name>ServerHostingQueueManager</Name>
         </DisplayString>
       </DisplayStrings>
       <KnowledgeArticles></KnowledgeArticles>
