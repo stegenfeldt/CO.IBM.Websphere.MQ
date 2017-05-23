@@ -34,6 +34,7 @@
       <SubType>Content</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Scripts\CollectListenerSessions.vbs" />
+    <EmbeddedResource Include="Scripts\Get-MQQueuePerfPB.ps1" />
     <EmbeddedResource Include="Scripts\MonitorIPPROCS.vbs" />
     <EmbeddedResource Include="Scripts\QueueCurrentDepthMonitor.vbs" />
   </ItemGroup>
