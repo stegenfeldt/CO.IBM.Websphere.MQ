@@ -1,56 +1,100 @@
 ﻿[CmdletBinding()]
 Param (
-    [Parameter(Mandatory=$true)]
-    [string]$QueueName,
-    [Parameter(Mandatory=$true)]
-    [string]$QueueManager,
-    [Parameter(Mandatory=$true)]
-    [ValidateSet("CURDEPTH","IPPROCS","SESSIONS","OPPROCS")]
-    [string]$DisplayParameter
+	[Parameter(Mandatory=$true)]
+	[string] $QueueManager,
+	[string] $QueueName,
+	[Parameter(Mandatory=$true)]
+	[ValidateSet("CURDEPTH","IPPROCS","SESSIONS","OPPROCS")]
+	[string] $DisplayParameter
 )
 
-#$cmdResult = @"
-#5724-H72 (C) Copyright IBM Corp. 1994, 2009.  ALL RIGHTS RESERVED.
-#Starting MQSC for queue manager EXT_QM.
-
-
-#     1 : Display Queue(   CHANGE_REQUEST) CURDEPTH
-#AMQ8409: Display Queue details.
-#   QUEUE(CHANGE_REQUEST)                   TYPE(QLOCAL)
-#   CURDEPTH(242)
-#One MQSC command read.
-#No commands have a syntax error.
-#All valid MQSC commands were processed.
-#"@
-
-function Extract-MQCurrDepthFromCmd ($CommandResult)
+function Extract-MQPerfdataFromCmd ($CommandResult, $DisplayParameter)
 {
-    $CommandResult -match "CURDEPTH\((.*)\)" | Out-Null
-    $currDepth = $matches[1] -as [double]
-    if ($currDepth) {
-        return $currDepth
-    } else {
-        return $null
-    }
+	$CommandResult -match "$DisplayParameter\((.*)\)" | Out-Null
+	$perfResult = $matches[1] -as [double]
+	if ($perfResult) {
+		return $perfResult
+	} else {
+		return $null
+	}
 }
 
 function Invoke-MQDisplayQueue
 {
-    [CmdletBinding()]
-    Param (
-        [Parameter(Mandatory=$true)]
-        [string]$QueueName,
-        [Parameter(Mandatory=$true)]
-        [string]$QueueManager,
-        [Parameter(Mandatory=$true)]
-        [ValidateSet("CURDEPTH","IPPROCS","SESSIONS")]
-        [string]$DisplayParameter
-    )
-    $commandString = "cmd"
-    $commandArguments = "/c echo Display Queue($QueueName) $DisplayParameter | runmqsc $QueueManager"
+	[CmdletBinding()]
+	Param (
+		[Parameter(Mandatory=$true)]
+		[string]$QueueName,
+		[Parameter(Mandatory=$true)]
+		[string]$QueueManager,
+		[Parameter(Mandatory=$true)]
+		[string]$DisplayParameter
+	)
+	$commandString = "cmd"
+	$commandArguments = "/c echo Display Queue($QueueName) $DisplayParameter | runmqsc $QueueManager"
 
-    & $commandString $commandArguments
+	[string]$commandResult = & $commandString $commandArguments
+	return $commandResult
 }
 
-$mqQueueResult = Invoke-MQDisplayQueue -QueueName "TESTQUEUE" -QueueManager "TESTQUQUEMANAGER" -DisplayParameter CURDEPTH
-#Extract-MQCurrDepthFromCmd -CommandResult $cmdResult
+function Get-MQQueueNames
+{
+	[CmdletBinding()]
+	Param
+	(
+		[Parameter(Mandatory=$true)]
+		[string]$QueueManager
+	)
+
+	$commandString = "cmd"
+	$commandArguments = "/c echo Display QL(*) | runmqsc $QueueManager"
+	[string] $qlResult = & $commandString $commandArguments
+
+	$queueSearch = Select-String -InputObject $qlResult -Pattern "QUEUE\((.*)\) " -AllMatches
+	$queueNames = New-Object -TypeName System.Collections.ArrayList
+	foreach ($match in $queueSearch.Matches)
+	{
+		[string]$queueName = $match.Groups[1].Value
+		$queueName = $queueName.Trim()
+		$queueNames.Add($queueName) | Out-Null
+	}
+
+	return $queueNames
+}
+
+function Main()
+{
+	# Is QueueName provided?
+	if ($QueueName)
+	{
+		# Verify Length
+		if ($QueueName.Length -gt 0)
+		{
+			$queueNames = $QueueName
+		}
+	} else {
+		# No QueueName provided, gather all locally available
+		$queueNames = Get-MQQueueNames -QueueManager $QueueManager
+	}
+
+	# Initiate MOM.ScriptAPI-objects for the property bags
+	$omApi = New-Object -ComObject "MOM.ScriptApi"
+
+	foreach ($queueName in $queueNames)
+	{
+		# execute "display <DisplayParameter>(<queueName>) | runmqsc <QueueManager>"
+		$displayResult = Invoke-MQDisplayQueue -QueueManager $QueueManager -QueueName $queueName -DisplayParameter $DisplayParameter
+		$perfData = Extract-MQPerfdataFromCmd -CommandResult $displayResult -DisplayParameter $DisplayParameter
+
+		# Create property bag object and populate values
+		$omPb = $omApi.CreatePropertyBag()
+		$omPb.AddValue("Value", $perfData)
+		$omPb.AddValue("Object", $QueueManager)
+		$omPb.AddValue("Instance", $queueName)
+		$omPb.AddValue("Counter", $DisplayParameter)
+
+		# Return property bag to workflow
+		$omPb
+	}
+}
+Main

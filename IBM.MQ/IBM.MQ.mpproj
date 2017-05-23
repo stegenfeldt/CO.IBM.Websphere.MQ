@@ -94,6 +94,9 @@
       <SubType>Code</SubType>
       <DependentUpon>Monitors\QueueMonitors.mptg</DependentUpon>
     </Compile>
+    <Compile Include="ProbeModules\IBM.MQ.Queue.PerfPB.ProbeAction.mpx">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Relationships\IBM.MQ.QueueManagerHostingChannel.mpx">
       <SubType>Code</SubType>
     </Compile>
@@ -143,6 +146,7 @@
     <Folder Include="Monitors" />
     <Folder Include="Classes" />
     <Folder Include="Discoveries" />
+    <Folder Include="ProbeModules" />
     <Folder Include="Relationships" />
     <Folder Include="Scripts" />
   </ItemGroup>

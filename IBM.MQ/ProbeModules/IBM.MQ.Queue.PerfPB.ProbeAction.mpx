@@ -1,0 +1,56 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TypeDefinitions>
+    <ModuleTypes>
+      <ProbeActionModuleType ID="IBM.MQ.Queue.PerfPB.ProbeAction" Accessibility="Internal">
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>Windows!Microsoft.Windows.PowerShellSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="QueueManager" type="NonNullString" />
+          <xsd:element name="QueueName" type="xsd:string" minOccurs="0" maxOccurs="1" />
+          <xsd:element name="DisplayParameter">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="CURDEPTH" />
+                <xsd:enumeration value="IPPROCS" />
+                <xsd:enumeration value="OPPROCS" />
+                <xsd:enumeration value="SESSIONS" />
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+          <xsd:element name="TimeoutSeconds" type="xsd:integer" />
+        </Configuration>
+        <ModuleImplementation>
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Script" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagProbe">
+                <ScriptName>Get-MQQueuePerfPB.ps1</ScriptName>
+                <ScriptBody>$IncludeFileContent/Scripts/Get-MQQueuePerfPB.ps1$</ScriptBody>
+                <Parameters>
+                  <Parameter>
+                    <Name>QueueManager</Name>
+                    <Value>$Config/QueueManager$</Value>
+                  </Parameter>
+                  <Parameter>
+                    <Name>QueueName</Name>
+                    <Value>$Config/QueueName$</Value>
+                  </Parameter>
+                  <Parameter>
+                    <Name>DisplayParameter</Name>
+                    <Value>$Config/DisplayParameter$</Value>
+                  </Parameter>
+                </Parameters>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Script" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+  </TypeDefinitions>
+</ManagementPackFragment>

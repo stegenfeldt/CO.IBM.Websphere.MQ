@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.2</Version>
+      <Version>3.2.0.5</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -90,6 +90,157 @@
         </RelationshipType>
       </RelationshipTypes>
     </EntityTypes>
+    <ModuleTypes>
+      <ProbeActionModuleType ID="IBM.MQ.Queue.PerfPB.ProbeAction" Accessibility="Internal">
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>Windows!Microsoft.Windows.PowerShellSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="QueueManager" type="NonNullString" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="QueueName" type="xsd:string" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="DisplayParameter" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="CURDEPTH" />
+                <xsd:enumeration value="IPPROCS" />
+                <xsd:enumeration value="OPPROCS" />
+                <xsd:enumeration value="SESSIONS" />
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+          <xsd:element name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <ModuleImplementation>
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Script" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagProbe">
+                <ScriptName>Get-MQQueuePerfPB.ps1</ScriptName>
+                <ScriptBody><![CDATA[[CmdletBinding()]
+Param (
+	[Parameter(Mandatory=$true)]
+	[string] $QueueManager,
+	[string] $QueueName,
+	[Parameter(Mandatory=$true)]
+	[ValidateSet("CURDEPTH","IPPROCS","SESSIONS","OPPROCS")]
+	[string] $DisplayParameter
+)
+
+function Extract-MQPerfdataFromCmd ($CommandResult, $DisplayParameter)
+{
+	$CommandResult -match "$DisplayParameter\((.*)\)" | Out-Null
+	$perfResult = $matches[1] -as [double]
+	if ($perfResult) {
+		return $perfResult
+	} else {
+		return $null
+	}
+}
+
+function Invoke-MQDisplayQueue
+{
+	[CmdletBinding()]
+	Param (
+		[Parameter(Mandatory=$true)]
+		[string]$QueueName,
+		[Parameter(Mandatory=$true)]
+		[string]$QueueManager,
+		[Parameter(Mandatory=$true)]
+		[string]$DisplayParameter
+	)
+	$commandString = "cmd"
+	$commandArguments = "/c echo Display Queue($QueueName) $DisplayParameter | runmqsc $QueueManager"
+
+	[string]$commandResult = & $commandString $commandArguments
+	return $commandResult
+}
+
+function Get-MQQueueNames
+{
+	[CmdletBinding()]
+	Param
+	(
+		[Parameter(Mandatory=$true)]
+		[string]$QueueManager
+	)
+
+	$commandString = "cmd"
+	$commandArguments = "/c echo Display QL(*) | runmqsc $QueueManager"
+	[string] $qlResult = & $commandString $commandArguments
+
+	$queueSearch = Select-String -InputObject $qlResult -Pattern "QUEUE\((.*)\) " -AllMatches
+	$queueNames = New-Object -TypeName System.Collections.ArrayList
+	foreach ($match in $queueSearch.Matches)
+	{
+		[string]$queueName = $match.Groups[1].Value
+		$queueName = $queueName.Trim()
+		$queueNames.Add($queueName) | Out-Null
+	}
+
+	return $queueNames
+}
+
+function Main()
+{
+	# Is QueueName provided?
+	if ($QueueName)
+	{
+		# Verify Length
+		if ($QueueName.Length -gt 0)
+		{
+			$queueNames = $QueueName
+		}
+	} else {
+		# No QueueName provided, gather all locally available
+		$queueNames = Get-MQQueueNames -QueueManager $QueueManager
+	}
+
+	# Initiate MOM.ScriptAPI-objects for the property bags
+	$omApi = New-Object -ComObject "MOM.ScriptApi"
+
+	foreach ($queueName in $queueNames)
+	{
+		# execute "display <DisplayParameter>(<queueName>) | runmqsc <QueueManager>"
+		$displayResult = Invoke-MQDisplayQueue -QueueManager $QueueManager -QueueName $queueName -DisplayParameter $DisplayParameter
+		$perfData = Extract-MQPerfdataFromCmd -CommandResult $displayResult -DisplayParameter $DisplayParameter
+
+		# Create property bag object and populate values
+		$omPb = $omApi.CreatePropertyBag()
+		$omPb.AddValue("Value", $perfData)
+		$omPb.AddValue("Object", $QueueManager)
+		$omPb.AddValue("Instance", $queueName)
+		$omPb.AddValue("Counter", $DisplayParameter)
+
+		# Return property bag to workflow
+		$omPb
+	}
+}
+Main]]></ScriptBody>
+                <Parameters>
+                  <Parameter>
+                    <Name>QueueManager</Name>
+                    <Value>$Config/QueueManager$</Value>
+                  </Parameter>
+                  <Parameter>
+                    <Name>QueueName</Name>
+                    <Value>$Config/QueueName$</Value>
+                  </Parameter>
+                  <Parameter>
+                    <Name>DisplayParameter</Name>
+                    <Value>$Config/DisplayParameter$</Value>
+                  </Parameter>
+                </Parameters>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Script" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </ProbeActionModuleType>
+    </ModuleTypes>
   </TypeDefinitions>
   <Categories>
     <Category ID="Cat.IBM.MQ.QueueManager16" Target="IBM.MQ.QueueManager16" Value="System!System.Internal.ManagementPack.Images.u16x16Icon" />
