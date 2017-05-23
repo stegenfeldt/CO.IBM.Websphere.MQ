@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.0</Version>
+      <Version>3.2.0.1</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -265,7 +265,7 @@
           <TimeoutSeconds>60</TimeoutSeconds>
         </DataSource>
       </Discovery>
-      <Discovery ID="IBM.MQ.ListenerDiscvoery" Enabled="true" Target="IBM.MQ.QueueManager" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+      <Discovery ID="IBM.MQ.ListenerDiscovery" Enabled="true" Target="IBM.MQ.QueueManager" ConfirmDelivery="false" Remotable="true" Priority="Normal">
         <Category>Discovery</Category>
         <DiscoveryTypes>
           <DiscoveryClass TypeID="IBM.MQ.Listener">
@@ -351,7 +351,7 @@
           <TimeoutSeconds>300</TimeoutSeconds>
         </DataSource>
       </Discovery>
-      <Discovery ID="IBM.MQ.QueueDiscvoery" Enabled="true" Target="IBM.MQ.QueueManager" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+      <Discovery ID="IBM.MQ.QueueDiscovery" Enabled="true" Target="IBM.MQ.QueueManager" ConfirmDelivery="false" Remotable="true" Priority="Normal">
         <Category>Discovery</Category>
         <DiscoveryTypes>
           <DiscoveryClass TypeID="IBM.MQ.Queue">
@@ -1439,7 +1439,7 @@ Adapted for customer environment by Samuel Tegenfeldt
           <Name>IBM MQ</Name>
           <Description />
         </DisplayString>
-        <DisplayString ElementID="IBM.MQ.ListenerDiscvoery">
+        <DisplayString ElementID="IBM.MQ.ListenerDiscovery">
           <Name>Discover Listener</Name>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.ListenerFolder">
@@ -1525,7 +1525,7 @@ Adapted for customer environment by Samuel Tegenfeldt
         <DisplayString ElementID="IBM.MQ.Queue.IPPROCS.Monitor" SubElementID="Success">
           <Name>Success</Name>
         </DisplayString>
-        <DisplayString ElementID="IBM.MQ.QueueDiscvoery">
+        <DisplayString ElementID="IBM.MQ.QueueDiscovery">
           <Name>QueueDiscvoery</Name>
           <Description>discover Queues</Description>
         </DisplayString>

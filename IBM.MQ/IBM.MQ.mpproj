@@ -58,6 +58,24 @@
     <Compile Include="Classes\IBM.MQ.Server.mpx">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Discoveries\IBM.MQ.ChannelDiscovery.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Discoveries\IBM.MQ.DiscoverQueueProperties.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Discoveries\IBM.MQ.ListenerDiscovery.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Discoveries\IBM.MQ.QueueDiscovery.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Discoveries\IBM.MQ.QueueManagerDiscovery.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Discoveries\IBM.MQ.Server.Discovery.mpx">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="IBM.MQ.mpx">
       <SubType>Code</SubType>
     </Compile>
@@ -113,6 +131,7 @@
   <ItemGroup>
     <Folder Include="Monitors" />
     <Folder Include="Classes" />
+    <Folder Include="Discoveries" />
     <Folder Include="Relationships" />
     <Folder Include="Scripts" />
   </ItemGroup>

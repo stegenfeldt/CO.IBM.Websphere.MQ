@@ -1,0 +1,79 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Monitoring>
+    <Discoveries>
+      <Discovery ID="IBM.MQ.QueueManagerDiscovery" Enabled="true" Target="IBM.MQ.Server" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="IBM.MQ.QueueManager">
+            <Property TypeID="IBM.MQ.QueueManager" PropertyID="QueueManagerName" />
+            <Property TypeID="System!System.Entity" PropertyID="DisplayName" />
+          </DiscoveryClass>
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.DiscoveryProvider">
+          <IntervalSeconds>864000</IntervalSeconds>
+          <SyncTime />
+          <ScriptName>discoverQueueManager.vbs</ScriptName>
+          <Arguments>$MPElement$ $Target/Id$ $Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Arguments>
+          <ScriptBody>
+            Dim oAPI
+
+
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            ' Check for the required script arguments.
+            if oArgs.Count &lt; 3 Then
+            ' If the script is called without the required arguments,
+            ' create an information event and then quit.
+            Call oAPI.LogScriptEvent("DiscoverMqManager.vbs",101,0, _
+            "script was called with fewer than three arguments and was not executed.")
+            Wscript.Quit -1
+            End If
+
+            Dim SourceID, ManagedEntityId, TargetComputer
+
+            SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
+            ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
+            TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
+
+            Set oAPI = CreateObject("MOM.ScriptAPI")
+            Dim oDiscoveryData, oInst
+            Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
+
+            Set objShell = WScript.CreateObject("WScript.Shell")
+            Set objExecObject = objShell.Exec("dspmq")
+
+            Do While Not objExecObject.StdOut.AtEndOfStream
+
+            MQText = objExecObject.StdOut.ReadLine()
+            MQTextArray = split(MQText,")")
+            MQName = Replace(MQTextArray(0),"QMNAME(","")
+            'wscript.echo MQName
+
+            ' Discovered the application. Create the application instance.
+            Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.QueueManager']$")
+
+            ' Define the property values for this instance. Available
+            ' properties are determined by the Management Pack that
+            ' defines the class.
+            Call oInst.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", TargetComputer)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", MQName )
+            Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", MQName )
+
+            Call oDiscoveryData.AddInstance(oInst)
+
+            ' Submit the discovery data for processing.
+
+            Loop
+
+            Call oAPI.Return(oDiscoveryData)
+
+            Set oDiscoveryData = nothing
+            Set oAPI = nothing
+
+          </ScriptBody>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+  </Monitoring>
+</ManagementPackFragment>

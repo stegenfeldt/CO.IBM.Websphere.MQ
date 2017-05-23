@@ -1,0 +1,96 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Monitoring>
+    <Discoveries>
+            <Discovery ID="IBM.MQ.ChannelDiscovery" Enabled="true" Target="IBM.MQ.QueueManager" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="IBM.MQ.Channel">
+            <Property TypeID="IBM.MQ.Channel" PropertyID="ChannelName" />
+            <Property TypeID="IBM.MQ.Channel" PropertyID="QueueManagerName" />
+            <Property TypeID="System!System.Entity" PropertyID="DisplayName" />
+            <Property TypeID="IBM.MQ.Channel" PropertyID="CHLTYPE" />
+            <Property TypeID="IBM.MQ.Channel" PropertyID="BATCHSZ" />
+            <Property TypeID="IBM.MQ.Channel" PropertyID="DESCR" />
+            <Property TypeID="IBM.MQ.Channel" PropertyID="MAXMSGL" />
+            <Property TypeID="IBM.MQ.Channel" PropertyID="NPMSPEED" />
+            <Property TypeID="IBM.MQ.Channel" PropertyID="SSLCAUTH" />
+            <Property TypeID="IBM.MQ.Channel" PropertyID="TRPTYPE" />
+            <Property TypeID="IBM.MQ.Channel" PropertyID="USEDLQ" />
+          </DiscoveryClass>
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.DiscoveryProvider">
+          <IntervalSeconds>864000</IntervalSeconds>
+          <SyncTime />
+          <ScriptName>discoverChannel.vbs</ScriptName>
+          <Arguments>$MPElement$ $Target/Id$ $Target/Host/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$ $Target/Property[Type="IBM.MQ.QueueManager"]/QueueManagerName$</Arguments>
+          <ScriptBody>
+            Dim oAPI
+
+            Dim oArgs
+            Set oArgs = WScript.Arguments
+            ' Check for the required script arguments.
+            if oArgs.Count &lt; 2 Then
+            ' If the script is called without the required arguments,
+            ' create an information event and then quit.
+            Call oAPI.LogScriptEvent("discoverChannel.vbs",101,0, _
+            "script was called with fewer than three arguments and was not executed.")
+            Wscript.Quit -1
+            End If
+
+
+            Dim SourceID, ManagedEntityId, TargetComputer, QueueManagerName
+
+            SourceId = oArgs(0) ' The GUID of the discovery object that launched the script.
+            ManagedEntityId = oArgs(1) ' The GUID of the computer class targeted by the script.
+            TargetComputer = oArgs(2) ' The FQDN of the computer targeted by the script.
+            QueueManagerName = oArgs(3)
+
+            Set oAPI = CreateObject("MOM.ScriptAPI")
+            Dim oDiscoveryData, oInst
+            Set oDiscoveryData = oAPI.CreateDiscoveryData(0, SourceId, ManagedEntityId)
+
+            Set objShell = WScript.CreateObject("WScript.Shell")
+            QueueCommand = "cmd /c echo Display channel(*) | runmqsc " &amp; QueueManagerName
+            Set objExecObject = objShell.Exec(QueueCommand)
+
+            Do While Not objExecObject.StdOut.AtEndOfStream
+
+            QueueText = objExecObject.StdOut.ReadLine()
+
+            IF INSTR(QueueText, "CHANNEL(") THEN
+            MQTextArray = split(QueueText,")")
+            ChannelName = Replace(MQTextArray(0),"CHANNEL(","")
+
+            ' Discovered the application. Create the application instance.
+            Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Channel']$")
+            ' Define the property values for this instance. Available
+            ' properties are determined by the Management Pack that
+            ' defines the class.
+
+            Call oInst.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", TargetComputer)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Channel']/ChannelName$",ChannelName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.QueueManager']/QueueManagerName$", QueueManagerName)
+            Call oInst.AddProperty("$MPElement[Name='IBM.MQ.Channel']/QueueManagerName$", QueueManagerName)
+            Call oInst.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", ChannelName)
+
+
+            Call oDiscoveryData.AddInstance(oInst)
+
+            ' Submit the discovery data for processing.
+            Call oAPI.LogScriptEvent("discoverQueue.vbs",10011,0,"New Channel: " &amp;ChannelName&amp; " Added to Discovery")
+
+            END IF
+
+            Loop
+
+            Call oAPI.Return(oDiscoveryData)
+
+            Set oDiscoveryData = nothing
+            Set oAPI = nothing
+          </ScriptBody>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+  </Monitoring>
+</ManagementPackFragment>
