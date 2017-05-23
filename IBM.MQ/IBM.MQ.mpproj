@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Monitors" />
+    <Folder Include="Classes" />
     <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
