@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.5</Version>
+      <Version>3.2.0.9</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -91,6 +91,41 @@
       </RelationshipTypes>
     </EntityTypes>
     <ModuleTypes>
+      <DataSourceModuleType ID="IBM.MQ.Queue.TimedPerfPropertyBag" Accessibility="Internal">
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>Windows!Microsoft.Windows.PowerShellSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="QueueManager" type="NonNullString" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="QueueName" type="xsd:string" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="DisplayParameter" type="NonNullString" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="SyncTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <ModuleImplementation>
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler" TypeID="System!System.SimpleScheduler">
+                <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
+                <SyncTime>$Config/SyncTime$</SyncTime>
+              </DataSource>
+              <ProbeAction ID="PropertyBag" TypeID="IBM.MQ.Queue.PerfPB.ProbeAction">
+                <QueueManager>$Config/QueueManager$</QueueManager>
+                <QueueName>$Config/QueueName$</QueueName>
+                <DisplayParameter>$Config/DisplayParameter$</DisplayParameter>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="PropertyBag">
+                <Node ID="Scheduler" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+      </DataSourceModuleType>
       <ProbeActionModuleType ID="IBM.MQ.Queue.PerfPB.ProbeAction" Accessibility="Internal">
         <Configuration>
           <IncludeSchemaTypes>
@@ -98,16 +133,7 @@
           </IncludeSchemaTypes>
           <xsd:element name="QueueManager" type="NonNullString" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
           <xsd:element name="QueueName" type="xsd:string" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="DisplayParameter" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-            <xsd:simpleType>
-              <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="CURDEPTH" />
-                <xsd:enumeration value="IPPROCS" />
-                <xsd:enumeration value="OPPROCS" />
-                <xsd:enumeration value="SESSIONS" />
-              </xsd:restriction>
-            </xsd:simpleType>
-          </xsd:element>
+          <xsd:element name="DisplayParameter" type="NonNullString" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
           <xsd:element name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
         </Configuration>
         <ModuleImplementation>

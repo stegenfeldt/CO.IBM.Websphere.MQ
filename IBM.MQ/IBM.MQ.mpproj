@@ -69,6 +69,9 @@
     <Compile Include="Classes\IBM.MQ.Server.mpx">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DataSources\IBM.MQ.Queue.TimedPerfPropertyBag.mpx">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Discoveries\IBM.MQ.ChannelDiscovery.mpx">
       <SubType>Code</SubType>
     </Compile>
@@ -94,7 +97,7 @@
       <SubType>Code</SubType>
       <DependentUpon>Monitors\QueueMonitors.mptg</DependentUpon>
     </Compile>
-    <Compile Include="ProbeModules\IBM.MQ.Queue.PerfPB.ProbeAction.mpx">
+    <Compile Include="ProbeActions\IBM.MQ.Queue.PerfPB.ProbeAction.mpx">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Relationships\IBM.MQ.QueueManagerHostingChannel.mpx">
@@ -146,7 +149,8 @@
     <Folder Include="Monitors" />
     <Folder Include="Classes" />
     <Folder Include="Discoveries" />
-    <Folder Include="ProbeModules" />
+    <Folder Include="DataSources" />
+    <Folder Include="ProbeActions" />
     <Folder Include="Relationships" />
     <Folder Include="Scripts" />
   </ItemGroup>

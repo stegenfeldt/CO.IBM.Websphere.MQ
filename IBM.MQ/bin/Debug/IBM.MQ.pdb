@@ -7,7 +7,8 @@ Relationships\IBM.MQ.QueueManagerHostingChannel.mpx*IBM.MQ.QueueManagerHostingCh
 Relationships\IBM.MQ.QueueManagerHostingListener.mpx*IBM.MQ.QueueManagerHostingListener*5*10*RelationshipType
 Relationships\IBM.MQ.QueueManagerHostingQueue.mpx*IBM.MQ.QueueManagerHostingQueue*5*10*RelationshipType
 Relationships\IBM.MQ.ServerHostingQueueManager.mpx*IBM.MQ.ServerHostingQueueManager*5*10*RelationshipType
-ProbeModules\IBM.MQ.Queue.PerfPB.ProbeAction.mpx*IBM.MQ.Queue.PerfPB.ProbeAction*4*8*ProbeActionModuleType
+DataSources\IBM.MQ.Queue.TimedPerfPropertyBag.mpx*IBM.MQ.Queue.TimedPerfPropertyBag*4*8*DataSourceModuleType
+ProbeActions\IBM.MQ.Queue.PerfPB.ProbeAction.mpx*IBM.MQ.Queue.PerfPB.ProbeAction*4*8*ProbeActionModuleType
 IBM.MQ.mpx*Cat.IBM.MQ.QueueManager16*4*6*Category
 IBM.MQ.mpx*Cat.IBM.MQ.QueueManager80*5*6*Category
 Discoveries\IBM.MQ.ChannelDiscovery.mpx*IBM.MQ.ChannelDiscovery*4*14*Discovery
