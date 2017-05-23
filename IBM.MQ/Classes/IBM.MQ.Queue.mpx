@@ -1,0 +1,43 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="IBM.MQ.Queue" Accessibility="Public" Abstract="false" Base="Windows!Microsoft.Windows.ApplicationComponent" Hosted="true" Singleton="false">
+          <Property ID="QueueName" Type="string" Key="true" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="QueueManagerName" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="TYPE" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="DESCR" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="MAXDEPTH" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="MAXMSGL" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+        </ClassType>
+      </ClassTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="IBM.MQ.Queue">
+          <Name>Queue</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="DESCR">
+          <Name>Description</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="MAXDEPTH">
+          <Name>MAXDEPTH</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="MAXMSGL">
+          <Name>MAXMSGL</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="QueueManagerName">
+          <Name>Queue Manager Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="QueueName">
+          <Name>Queue Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue" SubElementID="TYPE">
+          <Name>TYPE</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

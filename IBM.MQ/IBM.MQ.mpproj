@@ -43,6 +43,21 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\IBM.MQ.Channel.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\IBM.MQ.Listener.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\IBM.MQ.Queue.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\IBM.MQ.QueueManager.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\IBM.MQ.Server.mpx">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="IBM.MQ.mpx">
       <SubType>Code</SubType>
     </Compile>

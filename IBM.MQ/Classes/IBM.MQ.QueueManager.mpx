@@ -1,0 +1,23 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="IBM.MQ.QueueManager" Accessibility="Public" Abstract="false" Base="Windows!Microsoft.Windows.ApplicationComponent" Hosted="true" Singleton="false">
+          <Property ID="QueueManagerName" Type="string" Key="true" CaseSensitive="false" MinLength="0" MaxLength="256" />
+        </ClassType>
+      </ClassTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="IBM.MQ.QueueManager">
+          <Name>Queue Manager</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.QueueManager" SubElementID="QueueManagerName">
+          <Name>Queue Manager Name</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

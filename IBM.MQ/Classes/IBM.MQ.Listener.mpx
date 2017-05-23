@@ -1,0 +1,47 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="IBM.MQ.Listener" Accessibility="Public" Abstract="false" Base="Windows!Microsoft.Windows.ApplicationComponent" Hosted="true" Singleton="false">
+          <Property ID="ListenerName" Type="string" Key="true" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="QueueManagerName" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="TRPTYPE" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="CONTROL" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="PORT" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="DESCR" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="IPADDR" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+        </ClassType>
+      </ClassTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="IBM.MQ.Listener">
+          <Name>Listener</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="CONTROL">
+          <Name>CONTROL</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="DESCR">
+          <Name>Description</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="IPADDR">
+          <Name>IPADDR</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="ListenerName">
+          <Name>Listener Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="PORT">
+          <Name>PORT</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="QueueManagerName">
+          <Name>Queue Manager Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Listener" SubElementID="TRPTYPE">
+          <Name>TRPTYPE</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

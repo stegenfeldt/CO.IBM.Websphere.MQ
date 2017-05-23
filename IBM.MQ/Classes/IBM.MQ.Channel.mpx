@@ -1,0 +1,59 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="IBM.MQ.Channel" Accessibility="Public" Abstract="false" Base="Windows!Microsoft.Windows.ApplicationComponent" Hosted="true" Singleton="false">
+          <Property ID="ChannelName" Type="string" Key="true" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="QueueManagerName" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="CHLTYPE" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="BATCHSZ" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="DESCR" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="MAXMSGL" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="NPMSPEED" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="SSLCAUTH" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="TRPTYPE" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+          <Property ID="USEDLQ" Type="string" Key="false" CaseSensitive="false" MinLength="0" MaxLength="256" />
+        </ClassType>
+      </ClassTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="IBM.MQ.Channel">
+          <Name>Channel</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="BATCHSZ">
+          <Name>BATCHSZ</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="ChannelName">
+          <Name>Channel Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="CHLTYPE">
+          <Name>CHLTYPE</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="DESCR">
+          <Name>Description</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="MAXMSGL">
+          <Name>MAXMSGL</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="NPMSPEED">
+          <Name>NPMSPEED</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="QueueManagerName">
+          <Name>Queue Manager Name</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="SSLCAUTH">
+          <Name>SSLCAUTH</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="TRPTYPE">
+          <Name>TRPTYPE</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Channel" SubElementID="USEDLQ">
+          <Name>USEDLQ</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>
