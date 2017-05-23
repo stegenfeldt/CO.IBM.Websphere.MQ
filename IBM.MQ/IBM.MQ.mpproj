@@ -33,10 +33,20 @@
     <EmbeddedResource Include="IBM.MQ.QueueManager16.png">
       <SubType>Content</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Scripts\ChannelStatusMonitor.vbs" />
+    <EmbeddedResource Include="Scripts\CollectCURDEPTH.vbs" />
+    <EmbeddedResource Include="Scripts\CollectIPPROCS.vbs" />
     <EmbeddedResource Include="Scripts\CollectListenerSessions.vbs" />
+    <EmbeddedResource Include="Scripts\CollectQueueOPPROCS.vbs" />
+    <EmbeddedResource Include="Scripts\discoverChannel.vbs" />
+    <EmbeddedResource Include="Scripts\discoverListener.vbs" />
+    <EmbeddedResource Include="Scripts\discoverQueue.vbs" />
+    <EmbeddedResource Include="Scripts\DiscoverQueueProperties.vbs" />
     <EmbeddedResource Include="Scripts\Get-MQQueuePerfPB.ps1" />
+    <EmbeddedResource Include="Scripts\ListenerStatusMonitor.vbs" />
     <EmbeddedResource Include="Scripts\MonitorIPPROCS.vbs" />
     <EmbeddedResource Include="Scripts\QueueCurrentDepthMonitor.vbs" />
+    <EmbeddedResource Include="Scripts\QueueManagerStatusMonitor.vbs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="IBM.MQ.QueueManager80.png">

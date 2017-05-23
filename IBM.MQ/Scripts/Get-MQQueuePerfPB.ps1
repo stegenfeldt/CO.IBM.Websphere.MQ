@@ -5,7 +5,7 @@ Param (
     [Parameter(Mandatory=$true)]
     [string]$QueueManager,
     [Parameter(Mandatory=$true)]
-    [ValidateSet("CURDEPTH","IPPROCS","SESSIONS")]
+    [ValidateSet("CURDEPTH","IPPROCS","SESSIONS","OPPROCS")]
     [string]$DisplayParameter
 )
 

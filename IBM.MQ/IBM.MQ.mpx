@@ -35,33 +35,7 @@
             <SyncTime />
             <ScriptName>CollectIPPROCS.vbs</ScriptName>
             <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>
-              Dim oArgs
-              Set oArgs = WScript.Arguments
-              Dim QueueManagerName, QueueName
-              QueueManagerName= oArgs(0)
-              QueueName = oArgs(1)
-
-              IPPROCS = 0
-
-              Set objShell = WScript.CreateObject("WScript.Shell")
-              QueueCommand = "cmd /c echo Display Queue("&amp;QueueName&amp;") IPPROCS | runmqsc "&amp;QueueManagerName
-              Set objExecObject = objShell.Exec(QueueCommand)
-
-              Do While Not objExecObject.StdOut.AtEndOfStream
-              MQText = objExecObject.StdOut.ReadLine()
-              IF INSTR(MQText,"IPPROCS(") THEN
-              StatusArray =  Split(MQText, "IPPROCS(")
-              IPPROCS= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
-              END IF
-              Loop
-
-              Dim oAPI, oBag
-              Set oAPI = CreateObject("MOM.ScriptAPI")
-              Set oBag = oAPI.CreatePropertyBag()
-              Call oBag.AddValue("PerfValue",IPPROCS)
-              Call oAPI.Return(oBag)
-            </ScriptBody>
+            <ScriptBody>$IncludeFileContent/Scripts/CollectIPPROCS.vbs$</ScriptBody>
             <TimeoutSeconds>60</TimeoutSeconds>
             <ObjectName>Queue</ObjectName>
             <CounterName>IPPROCS</CounterName>
@@ -82,33 +56,7 @@
             <SyncTime />
             <ScriptName>CollectQueueOPPROCS.vbs</ScriptName>
             <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>
-              Dim oArgs
-              Set oArgs = WScript.Arguments
-              Dim QueueManagerName, QueueName
-              QueueManagerName= oArgs(0)
-              QueueName = oArgs(1)
-
-              OPPROCS = 0
-
-              Set objShell = WScript.CreateObject("WScript.Shell")
-              QueueCommand = "cmd /c echo Display Queue("&amp;QueueName&amp;") OPPROCS | runmqsc "&amp;QueueManagerName
-              Set objExecObject = objShell.Exec(QueueCommand)
-
-              Do While Not objExecObject.StdOut.AtEndOfStream
-              MQText = objExecObject.StdOut.ReadLine()
-              IF INSTR(MQText,"OPPROCS(") THEN
-              StatusArray =  Split(MQText, "OPPROCS(")
-              OPPROCS= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
-              END IF
-              Loop
-
-              Dim oAPI, oBag
-              Set oAPI = CreateObject("MOM.ScriptAPI")
-              Set oBag = oAPI.CreatePropertyBag()
-              Call oBag.AddValue("PerfValue",OPPROCS)
-              Call oAPI.Return(oBag)
-            </ScriptBody>
+            <ScriptBody>$IncludeFileContent/Scripts/CollectQueueOPPROCS.vbs$</ScriptBody>
             <TimeoutSeconds>60</TimeoutSeconds>
             <ObjectName>Queue</ObjectName>
             <CounterName>OPPROCS</CounterName>
@@ -129,33 +77,7 @@
             <SyncTime />
             <ScriptName>CollectCURDEPTH.vbs</ScriptName>
             <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>
-              Dim oArgs
-              Set oArgs = WScript.Arguments
-              Dim QueueManagerName, QueueName
-              QueueManagerName= oArgs(0)
-              QueueName = oArgs(1)
-
-              CURDEPTH = 0
-
-              Set objShell = WScript.CreateObject("WScript.Shell")
-              QueueCommand = "cmd /c echo Display Queue("&amp;QueueName&amp;") CURDEPTH| runmqsc "&amp;QueueManagerName
-              Set objExecObject = objShell.Exec(QueueCommand)
-
-              Do While Not objExecObject.StdOut.AtEndOfStream
-              MQText = objExecObject.StdOut.ReadLine()
-              IF INSTR(MQText,"CURDEPTH(") THEN
-              StatusArray =  Split(MQText, "CURDEPTH(")
-              CURDEPTH= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
-              END IF
-              Loop
-
-              Dim oAPI, oBag
-              Set oAPI = CreateObject("MOM.ScriptAPI")
-              Set oBag = oAPI.CreatePropertyBag()
-              Call oBag.AddValue("PerfValue",CURDEPTH)
-              Call oAPI.Return(oBag)
-            </ScriptBody>
+            <ScriptBody>$IncludeFileContent/Scripts/CollectCURDEPTH.vbs$</ScriptBody>
             <TimeoutSeconds>60</TimeoutSeconds>
             <ObjectName>Queue</ObjectName>
             <CounterName>CURDEPTH</CounterName>
@@ -207,39 +129,7 @@
           <SyncTime />
           <ScriptName>ChannelStatusMonitor.vbs</ScriptName>
           <Arguments>$Target/Property[Type="IBM.MQ.Channel"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Channel"]/ChannelName$</Arguments>
-          <ScriptBody>
-            Dim oArgs
-            Set oArgs = WScript.Arguments
-            Dim QueueManagerName
-            QueueManagerName= oArgs(0)
-            ChannelName= oArgs(1)
-
-            Dim oAPI, oBag
-            Set oAPI = CreateObject("MOM.ScriptAPI")
-
-            Set objShell = WScript.CreateObject("WScript.Shell")
-
-            Status = "Not Available"
-
-            QueueCommand = "cmd /c echo Display chs("&amp;ChannelName&amp;") | runmqsc "&amp;QueueManagerName
-            Set objExecObject = objShell.Exec(QueueCommand)
-
-            Do While Not objExecObject.StdOut.AtEndOfStream
-            MQText = objExecObject.StdOut.ReadLine()
-            IF INSTR(MQText,"STATUS(") THEN
-            StatusArray =  Split(MQText, "STATUS(")
-            StatusArray2 =  Split(StatusArray(1), ")")
-            Status = StatusArray2(0)
-            Exit do
-            END IF
-            Loop
-
-            'wscript.echo Status
-
-            Set oBag = oAPI.CreatePropertyBag()
-            Call oBag.AddValue("Status",Status)
-            Call oAPI.Return(oBag)
-          </ScriptBody>
+          <ScriptBody>$IncludeFileContent/Scripts/ChannelStatusMonitor.vbs$</ScriptBody>
           <TimeoutSeconds>120</TimeoutSeconds>
           <ErrorExpression>
             <And>
@@ -340,36 +230,7 @@
           <SyncTime />
           <ScriptName>ListenerStatusMonitor.vbs</ScriptName>
           <Arguments>$Target/Property[Type="IBM.MQ.Listener"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Listener"]/ListenerName$</Arguments>
-          <ScriptBody>
-            Dim oArgs
-            Set oArgs = WScript.Arguments
-            Dim QueueManagerName
-            QueueManagerName= oArgs(0)
-            ListenerName= oArgs(1)
-
-            Status = "Not Available"
-
-            Dim oAPI, oBag
-            Set oAPI = CreateObject("MOM.ScriptAPI")
-            Set objShell = WScript.CreateObject("WScript.Shell")
-
-            QueueCommand = "cmd /c echo dis lsstatus("&amp;ListenerName&amp;") | runmqsc "&amp;QueueManagerName
-            Set objExecObject = objShell.Exec(QueueCommand)
-
-            Do While Not objExecObject.StdOut.AtEndOfStream
-            MQText = objExecObject.StdOut.ReadLine()
-            IF INSTR(MQText,"STATUS(") THEN
-            StatusArray =  Split(MQText, "STATUS(")
-            StatusArray2 =  Split(StatusArray(1), ")")
-            Status = StatusArray2(0)
-            Exit do
-            END IF
-            Loop
-
-            Set oBag = oAPI.CreatePropertyBag()
-            Call oBag.AddValue("Status",Status)
-            Call oAPI.Return(oBag)
-          </ScriptBody>
+          <ScriptBody>$IncludeFileContent/Scripts/ListenerStatusMonitor.vbs$</ScriptBody>
           <TimeoutSeconds>60</TimeoutSeconds>
           <ErrorExpression>
             <SimpleExpression>
@@ -474,33 +335,7 @@
           <SyncTime />
           <ScriptName>QueueManagerStatusMonitor.vbs</ScriptName>
           <Arguments>$Target/Property[Type="IBM.MQ.QueueManager"]/QueueManagerName$</Arguments>
-          <ScriptBody>
-            Dim oArgs
-            Set oArgs = WScript.Arguments
-            Dim QueueManagerName
-            QueueManagerName= oArgs(0)
-
-            Dim oAPI, oBag
-            Set oAPI = CreateObject("MOM.ScriptAPI")
-
-            Status = "Not Available"
-
-            Set objShell = WScript.CreateObject("WScript.Shell")
-            Set objExecObject = objShell.Exec("dspmq -m "&amp;QueueManagerName&amp;" -s")
-
-            Do While Not objExecObject.StdOut.AtEndOfStream
-            MQText = objExecObject.StdOut.ReadLine()
-            IF INSTR(MQText,"STATUS(") THEN
-            StatusArray =  Split(MQText, "STATUS(")
-            Status = REPLACE(StatusArray(1),")","")
-            Exit do
-            END IF
-            Loop
-
-            Set oBag = oAPI.CreatePropertyBag()
-            Call oBag.AddValue("Status",Status)
-            Call oAPI.Return(oBag)
-          </ScriptBody>
+          <ScriptBody>$IncludeFileContent/Scripts/QueueManagerStatusMonitor.vbs$</ScriptBody>
           <TimeoutSeconds>60</TimeoutSeconds>
           <ErrorExpression>
             <SimpleExpression>
