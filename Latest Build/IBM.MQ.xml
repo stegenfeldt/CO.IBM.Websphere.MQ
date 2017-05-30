@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.18</Version>
+      <Version>3.2.0.19</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -1533,7 +1533,16 @@ Call oAPI.Return(oBag)]]></ScriptBody>
         </Configuration>
       </UnitMonitor>
       <UnitMonitor ID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor" Accessibility="Public" Enabled="true" Target="IBM.MQ.Queue" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="false" Priority="Normal" TypeID="IBM.MQ.Queue.Perf.MonitorType" ConfirmDelivery="false">
-        <Category>AvailabilityHealth</Category>
+        <Category>PerformanceHealth</Category>
+        <AlertSettings AlertMessage="IBM.MQ.Queue.CURDEPTH.Perf.Monitor.AlertMessage">
+          <AlertOnState>Warning</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>High</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Data/Context/Property[@Name="Value"]$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
         <OperationalStates>
           <OperationalState ID="Ok" MonitorTypeStateID="Ok" HealthState="Success" />
           <OperationalState ID="Warning" MonitorTypeStateID="Warning" HealthState="Warning" />
@@ -1629,6 +1638,7 @@ Call oAPI.Return(oBag)]]></ScriptBody>
       <StringResource ID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor_AlertMessageResourceID" />
       <StringResource ID="IBM.MQ.QueueManagerStatusMonitor_AlertMessageResourceID" />
       <StringResource ID="IBM.MQ.CurrentQueueDepth.AlertMessage" />
+      <StringResource ID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor.AlertMessage" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
@@ -1941,6 +1951,12 @@ Please see Alert Context for more information.</Description>
         <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor">
           <Name>Queue CURDEPTH Monitor</Name>
           <Description>Monitors the CURDEPTH value of the MQ Queue</Description>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor.AlertMessage">
+          <Name>CURDEPTH has exceeded threshold</Name>
+          <Description>The Current Queue depth is above configured threshold.
+
+Current Queue Depth: {0}</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor" SubElementID="Ok">
           <Name>Ok</Name>
