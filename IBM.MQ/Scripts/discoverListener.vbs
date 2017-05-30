@@ -31,7 +31,7 @@ Do While Not objExecObject.StdOut.AtEndOfStream
 
     IF INSTR(QueueText, "LISTENER(") THEN
         MQTextArray = split(QueueText,")")
-        ListenerName= Replace(MQTextArray(0),"LISTENER(","")
+        ListenerName= Trim(Replace(MQTextArray(0),"LISTENER(",""))
 
         ' Discovered the application. Create the application instance.
         Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Listener']$")

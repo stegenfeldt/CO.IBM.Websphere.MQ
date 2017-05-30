@@ -10,7 +10,7 @@ Dim oAPI, oBag
 Set oAPI = CreateObject("MOM.ScriptAPI")
 Set objShell = WScript.CreateObject("WScript.Shell")
 
-QueueCommand = "cmd /c echo dis lsstatus("&ListenerName&") | runmqsc "&QueueManagerName
+QueueCommand = "cmd /c echo dis lsstatus(" & ListenerName & ") | runmqsc " & QueueManagerName
 Set objExecObject = objShell.Exec(QueueCommand)
 
 Do While Not objExecObject.StdOut.AtEndOfStream

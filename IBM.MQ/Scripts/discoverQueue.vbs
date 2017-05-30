@@ -30,7 +30,7 @@ Do While Not objExecObject.StdOut.AtEndOfStream
 
     IF INSTR(QueueText, "QUEUE(") THEN
         MQTextArray = split(QueueText,")")
-        QueueName = Replace(MQTextArray(0),"QUEUE(","")
+        QueueName = Trim(Replace(MQTextArray(0),"QUEUE(",""))
 
         ' Discovered the application. Create the application instance.
         Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Queue']$")

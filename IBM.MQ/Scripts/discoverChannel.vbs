@@ -34,7 +34,7 @@ QueueText = objExecObject.StdOut.ReadLine()
 
 IF INSTR(QueueText, "CHANNEL(") THEN
 MQTextArray = split(QueueText,")")
-ChannelName = Replace(MQTextArray(0),"CHANNEL(","")
+ChannelName = Trim(Replace(MQTextArray(0),"CHANNEL(",""))
 
 ' Discovered the application. Create the application instance.
 Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Channel']$")

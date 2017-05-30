@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.17</Version>
+      <Version>3.2.0.18</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -489,7 +489,7 @@ QueueText = objExecObject.StdOut.ReadLine()
 
 IF INSTR(QueueText, "CHANNEL(") THEN
 MQTextArray = split(QueueText,")")
-ChannelName = Replace(MQTextArray(0),"CHANNEL(","")
+ChannelName = Trim(Replace(MQTextArray(0),"CHANNEL(",""))
 
 ' Discovered the application. Create the application instance.
 Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Channel']$")
@@ -650,7 +650,7 @@ Do While Not objExecObject.StdOut.AtEndOfStream
 
     IF INSTR(QueueText, "LISTENER(") THEN
         MQTextArray = split(QueueText,")")
-        ListenerName= Replace(MQTextArray(0),"LISTENER(","")
+        ListenerName= Trim(Replace(MQTextArray(0),"LISTENER(",""))
 
         ' Discovered the application. Create the application instance.
         Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Listener']$")
@@ -727,7 +727,7 @@ Do While Not objExecObject.StdOut.AtEndOfStream
 
     IF INSTR(QueueText, "QUEUE(") THEN
         MQTextArray = split(QueueText,")")
-        QueueName = Replace(MQTextArray(0),"QUEUE(","")
+        QueueName = Trim(Replace(MQTextArray(0),"QUEUE(",""))
 
         ' Discovered the application. Create the application instance.
         Set oInst = oDiscoveryData.CreateClassInstance("$MPElement[Name='IBM.MQ.Queue']$")
@@ -802,7 +802,7 @@ Set oAPI = nothing
 
             MQText = objExecObject.StdOut.ReadLine()
             MQTextArray = split(MQText,")")
-            MQName = Replace(MQTextArray(0),"QMNAME(","")
+            MQName = Trim(Replace(MQTextArray(0),"QMNAME(",""))
             'wscript.echo MQName
 
             ' Discovered the application. Create the application instance.
@@ -1238,7 +1238,7 @@ Dim oAPI, oBag
 Set oAPI = CreateObject("MOM.ScriptAPI")
 Set objShell = WScript.CreateObject("WScript.Shell")
 
-QueueCommand = "cmd /c echo dis lsstatus("&ListenerName&") | runmqsc "&QueueManagerName
+QueueCommand = "cmd /c echo dis lsstatus(" & ListenerName & ") | runmqsc " & QueueManagerName
 Set objExecObject = objShell.Exec(QueueCommand)
 
 Do While Not objExecObject.StdOut.AtEndOfStream
@@ -1916,7 +1916,7 @@ Adapted for customer environment by Samuel Tegenfeldt
           <Name>Server State</Name>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.CurrentQueueDepth">
-          <Name>MQ Queue Current Depth Monitor</Name>
+          <Name>LEGACY MQ Queue Current Depth Monitor</Name>
           <Description>The current queue depth is above the configured thresholds. See more information in Alert Context.</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.CurrentQueueDepth.AlertMessage">
@@ -1939,7 +1939,7 @@ Please see Alert Context for more information.</Description>
           <Description>OK</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor">
-          <Name>Cueue CURDEPTH Monitor</Name>
+          <Name>Queue CURDEPTH Monitor</Name>
           <Description>Monitors the CURDEPTH value of the MQ Queue</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor" SubElementID="Ok">

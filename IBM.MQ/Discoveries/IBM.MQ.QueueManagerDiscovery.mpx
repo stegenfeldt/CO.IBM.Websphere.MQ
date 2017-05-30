@@ -46,7 +46,7 @@
 
             MQText = objExecObject.StdOut.ReadLine()
             MQTextArray = split(MQText,")")
-            MQName = Replace(MQTextArray(0),"QMNAME(","")
+            MQName = Trim(Replace(MQTextArray(0),"QMNAME(",""))
             'wscript.echo MQName
 
             ' Discovered the application. Create the application instance.

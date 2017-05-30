@@ -27,7 +27,7 @@
         <ParentMonitor>Health!System.Health.AvailabilityState</ParentMonitor>
         <Accessibility>Public</Accessibility>
         <Id>CurrentQueueDepth</Id>
-        <DisplayName>MQ Queue Current Depth Monitor</DisplayName>
+        <DisplayName>LEGACY MQ Queue Current Depth Monitor</DisplayName>
         <Description>The current queue depth is above the configured thresholds. See more information in Alert Context.</Description>
         <Target>IBM.MQ.Queue</Target>
         <Enabled>true</Enabled>
@@ -73,7 +73,7 @@ Please see Alert Context for more information.</AlertDescription>
         <ParentMonitor>Health!System.Health.PerformanceState</ParentMonitor>
         <Accessibility>Public</Accessibility>
         <Id>Queue.CURDEPTH.Perf.Monitor</Id>
-        <DisplayName>Cueue CURDEPTH Monitor</DisplayName>
+        <DisplayName>Queue CURDEPTH Monitor</DisplayName>
         <Description>Monitors the CURDEPTH value of the MQ Queue</Description>
         <Target>IBM.MQ.Queue</Target>
         <Enabled>true</Enabled>
