@@ -1,0 +1,26 @@
+<TemplateGroup>
+  <Instances>
+    <Instance ID="Instance3306c3c90e6c4a1c9b248ad0b7dfe340" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.Monitoring.PerformanceCollectionRule" Version="1.0.0.0">
+      <PerformanceCollectionRuleConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <Id>IBM.MQ.Queue.CURDEPTH.PerformanceCollection</Id>
+        <DisplayName>IBM MQ Queue - CURDEPTH Performance Collection</DisplayName>
+        <Description>Collects CURDEPTH statistics on MQ Queues</Description>
+        <Category>PerformanceCollection</Category>
+        <ConfirmDelivery>false</ConfirmDelivery>
+        <Target>IBM.MQ.Queue</Target>
+        <Enabled>true</Enabled>
+        <Remotable>false</Remotable>
+        <Priority>Normal</Priority>
+        <DiscardLevel>100</DiscardLevel>
+        <ConditionDetectionConfig>&lt;Tolerance&gt;1&lt;/Tolerance&gt;&lt;ToleranceType&gt;Absolute&lt;/ToleranceType&gt;&lt;MaximumSampleSeparation&gt;10&lt;/MaximumSampleSeparation&gt;&lt;SamplingPeriodInSeconds&gt;300&lt;/SamplingPeriodInSeconds&gt;</ConditionDetectionConfig>
+        <ConditionDetectionId>CD</ConditionDetectionId>
+        <ConditionDetectionType>Performance!System.Performance.OptimizedCollectionFilter</ConditionDetectionType>
+        <DataSourceId>DS</DataSourceId>
+        <DataSourceConfig>&lt;QueueManager&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;CURDEPTH&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;30&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;300&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</DataSourceConfig>
+        <DataSourceType>IBM.MQ.Queue.PerformanceDataMapper</DataSourceType>
+        <CollectToDB>true</CollectToDB>
+        <CollectToDW>true</CollectToDW>
+      </PerformanceCollectionRuleConfig>
+    </Instance>
+  </Instances>
+</TemplateGroup>

@@ -69,6 +69,9 @@
     <Compile Include="Classes\IBM.MQ.Server.mpx">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DataSources\IBM.MQ.Queue.PerformanceDataMapper.mpx">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DataSources\IBM.MQ.Queue.TimedPerfPropertyBag.mpx">
       <SubType>Code</SubType>
     </Compile>
@@ -115,6 +118,10 @@
     <Compile Include="Relationships\IBM.MQ.ServerHostingQueueManager.mpx">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Rules\PerfCollectionRules.mptg.mpx">
+      <SubType>Code</SubType>
+      <DependentUpon>Rules\PerfCollectionRules.mptg</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ManagementPackReference Include="Microsoft.SystemCenter.DataWarehouse.Library">
@@ -159,12 +166,17 @@
     <Folder Include="Discoveries" />
     <Folder Include="DataSources" />
     <Folder Include="MonitorTypes" />
+    <Folder Include="Rules" />
     <Folder Include="ProbeActions" />
     <Folder Include="Relationships" />
     <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Monitors\QueueMonitors.mptg">
+      <SubType>Content</SubType>
+      <Generator>FragmentGenerator</Generator>
+    </Content>
+    <Content Include="Rules\PerfCollectionRules.mptg">
       <SubType>Content</SubType>
       <Generator>FragmentGenerator</Generator>
     </Content>

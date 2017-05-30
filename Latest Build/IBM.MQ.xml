@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.19</Version>
+      <Version>3.2.0.26</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -30,6 +30,11 @@
       <Reference Alias="System">
         <ID>System.Library</ID>
         <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Performance">
+        <ID>System.Performance.Library</ID>
+        <Version>7.0.8433.0</Version>
         <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
       </Reference>
     </References>
@@ -91,7 +96,46 @@
       </RelationshipTypes>
     </EntityTypes>
     <ModuleTypes>
-      <DataSourceModuleType ID="IBM.MQ.Queue.TimedPerfPropertyBag" Accessibility="Internal">
+      <DataSourceModuleType ID="IBM.MQ.Queue.PerformanceDataMapper" Accessibility="Public">
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>Windows!Microsoft.Windows.PowerShellSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="QueueManager" type="NonNullString" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="QueueName" type="xsd:string" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="DisplayParameter" type="NonNullString" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="SyncTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <ModuleImplementation>
+          <Composite>
+            <MemberModules>
+              <DataSource ID="PropertyBag" TypeID="IBM.MQ.Queue.TimedPerfPropertyBag">
+                <QueueManager>$Config/QueueManager$</QueueManager>
+                <QueueName>$Config/QueueName$</QueueName>
+                <DisplayParameter>$Config/DisplayParameter$</DisplayParameter>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+                <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
+                <SyncTime>$Config/SyncTime$</SyncTime>
+              </DataSource>
+              <ConditionDetection ID="DataMapper" TypeID="Performance!System.Performance.DataGenericMapper">
+                <ObjectName>$Data/Property[@Name='Object']$</ObjectName>
+                <CounterName>$Data/Property[@Name='Counter']$</CounterName>
+                <InstanceName>$Data/Property[@Name='Instance']$</InstanceName>
+                <Value>$Data/Property[@Name='Value']$</Value>
+              </ConditionDetection>
+            </MemberModules>
+            <Composition>
+              <Node ID="DataMapper">
+                <Node ID="PropertyBag" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>Performance!System.Performance.Data</OutputType>
+      </DataSourceModuleType>
+      <DataSourceModuleType ID="IBM.MQ.Queue.TimedPerfPropertyBag" Accessibility="Public">
         <Configuration>
           <IncludeSchemaTypes>
             <SchemaType>Windows!Microsoft.Windows.PowerShellSchema</SchemaType>
@@ -112,14 +156,54 @@
               </DataSource>
               <ProbeAction ID="PropertyBag" TypeID="IBM.MQ.Queue.PerfPB.ProbeAction">
                 <QueueManager>$Config/QueueManager$</QueueManager>
-                <QueueName>$Config/QueueName$</QueueName>
                 <DisplayParameter>$Config/DisplayParameter$</DisplayParameter>
                 <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
               </ProbeAction>
+              <ConditionDetection ID="PBfilter" TypeID="System!System.ExpressionFilter" Comment="Cookdown enabling filter">
+                <Expression>
+                  <And>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Value Type="String">$Config/QueueName$</Value>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value Type="String">Data/Property[@Name='Instance']</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Value Type="String">$Config/QueueManager$</Value>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value Type="String">Data/Property[@Name='Object']</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Value Type="String">$Config/DisplayParameter$</Value>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value Type="String">Data/Property[@Name='Counter']</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </And>
+                </Expression>
+              </ConditionDetection>
             </MemberModules>
             <Composition>
-              <Node ID="PropertyBag">
-                <Node ID="Scheduler" />
+              <Node ID="PBfilter">
+                <Node ID="PropertyBag">
+                  <Node ID="Scheduler" />
+                </Node>
               </Node>
             </Composition>
           </Composite>
@@ -304,45 +388,6 @@ Main]]></ScriptBody>
               <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
               <SyncTime>$Config/SyncTime$</SyncTime>
             </DataSource>
-            <ConditionDetection ID="PBFilter" TypeID="System!System.ExpressionFilter">
-              <Expression>
-                <And>
-                  <Expression>
-                    <SimpleExpression>
-                      <ValueExpression>
-                        <Value Type="String">$Config/QueueManager$</Value>
-                      </ValueExpression>
-                      <Operator>Equal</Operator>
-                      <ValueExpression>
-                        <Value Type="String">Property[@Name='Object']</Value>
-                      </ValueExpression>
-                    </SimpleExpression>
-                  </Expression>
-                  <Expression>
-                    <SimpleExpression>
-                      <ValueExpression>
-                        <Value Type="String">$Config/QueueName$</Value>
-                      </ValueExpression>
-                      <Operator>Equal</Operator>
-                      <ValueExpression>
-                        <Value Type="String">Property[@Name='Instance']</Value>
-                      </ValueExpression>
-                    </SimpleExpression>
-                  </Expression>
-                  <Expression>
-                    <SimpleExpression>
-                      <ValueExpression>
-                        <Value Type="String">$Config/DisplayParameter$</Value>
-                      </ValueExpression>
-                      <Operator>Equal</Operator>
-                      <ValueExpression>
-                        <Value Type="String">Property[@Name='Counter']</Value>
-                      </ValueExpression>
-                    </SimpleExpression>
-                  </Expression>
-                </And>
-              </Expression>
-            </ConditionDetection>
             <ConditionDetection ID="OkFilter" TypeID="System!System.ExpressionFilter">
               <Expression>
                 <SimpleExpression>
@@ -401,23 +446,17 @@ Main]]></ScriptBody>
           <RegularDetections>
             <RegularDetection MonitorTypeStateID="Ok">
               <Node ID="OkFilter">
-                <Node ID="PBFilter">
-                  <Node ID="PropertyBag" />
-                </Node>
+                <Node ID="PropertyBag" />
               </Node>
             </RegularDetection>
             <RegularDetection MonitorTypeStateID="Warning">
               <Node ID="WarningFilter">
-                <Node ID="PBFilter">
-                  <Node ID="PropertyBag" />
-                </Node>
+                <Node ID="PropertyBag" />
               </Node>
             </RegularDetection>
             <RegularDetection MonitorTypeStateID="Error">
               <Node ID="ErrorFilter">
-                <Node ID="PBFilter">
-                  <Node ID="PropertyBag" />
-                </Node>
+                <Node ID="PropertyBag" />
               </Node>
             </RegularDetection>
           </RegularDetections>
@@ -1053,6 +1092,29 @@ Call oAPI.Return(oBag)
         <WriteActions>
           <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
           <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
+        </WriteActions>
+      </Rule>
+      <Rule ID="IBM.MQ.IBM.MQ.Queue.CURDEPTH.PerformanceCollection" Target="IBM.MQ.Queue" Enabled="true" ConfirmDelivery="false" Remotable="false" Priority="Normal" DiscardLevel="100">
+        <Category>PerformanceCollection</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="IBM.MQ.Queue.PerformanceDataMapper">
+            <QueueManager>$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$</QueueManager>
+            <QueueName>$Target/Property[Type='IBM.MQ.Queue']/QueueName$</QueueName>
+            <DisplayParameter>CURDEPTH</DisplayParameter>
+            <TimeoutSeconds>30</TimeoutSeconds>
+            <IntervalSeconds>300</IntervalSeconds>
+            <SyncTime />
+          </DataSource>
+        </DataSources>
+        <ConditionDetection ID="CD" TypeID="Performance!System.Performance.OptimizedCollectionFilter">
+          <Tolerance>1</Tolerance>
+          <ToleranceType>Absolute</ToleranceType>
+          <MaximumSampleSeparation>10</MaximumSampleSeparation>
+          <SamplingPeriodInSeconds>300</SamplingPeriodInSeconds>
+        </ConditionDetection>
+        <WriteActions>
+          <WriteAction ID="CollectToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
+          <WriteAction ID="CollectToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
         </WriteActions>
       </Rule>
     </Rules>
@@ -1981,6 +2043,10 @@ Current Queue Depth: {0}</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.ServerHostingQueueManager">
           <Name>ServerHostingQueueManager</Name>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.IBM.MQ.Queue.CURDEPTH.PerformanceCollection">
+          <Name>IBM MQ Queue - CURDEPTH Performance Collection</Name>
+          <Description>Collects CURDEPTH statistics on MQ Queues</Description>
         </DisplayString>
       </DisplayStrings>
       <KnowledgeArticles></KnowledgeArticles>

@@ -1,7 +1,7 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TypeDefinitions>
     <ModuleTypes>
-      <DataSourceModuleType ID="IBM.MQ.Queue.TimedPerfPropertyBag" Accessibility="Internal">
+      <DataSourceModuleType ID="IBM.MQ.Queue.TimedPerfPropertyBag" Accessibility="Public">
         <Configuration>
           <IncludeSchemaTypes>
             <SchemaType>Windows!Microsoft.Windows.PowerShellSchema</SchemaType>
@@ -22,14 +22,54 @@
               </DataSource>
               <ProbeAction ID="PropertyBag" TypeID="IBM.MQ.Queue.PerfPB.ProbeAction">
                 <QueueManager>$Config/QueueManager$</QueueManager>
-                <QueueName>$Config/QueueName$</QueueName>
                 <DisplayParameter>$Config/DisplayParameter$</DisplayParameter>
                 <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
               </ProbeAction>
+              <ConditionDetection ID="PBfilter" TypeID="System!System.ExpressionFilter" Comment="Cookdown enabling filter">
+                <Expression>
+                  <And>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Value Type="String">$Config/QueueName$</Value>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value Type="String">Data/Property[@Name='Instance']</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Value Type="String">$Config/QueueManager$</Value>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value Type="String">Data/Property[@Name='Object']</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                    <Expression>
+                      <SimpleExpression>
+                        <ValueExpression>
+                          <Value Type="String">$Config/DisplayParameter$</Value>
+                        </ValueExpression>
+                        <Operator>Equal</Operator>
+                        <ValueExpression>
+                          <Value Type="String">Data/Property[@Name='Counter']</Value>
+                        </ValueExpression>
+                      </SimpleExpression>
+                    </Expression>
+                  </And>
+                </Expression>
+              </ConditionDetection>
             </MemberModules>
             <Composition>
-              <Node ID="PropertyBag">
-                <Node ID="Scheduler" />
+              <Node ID="PBfilter">
+                <Node ID="PropertyBag">
+                  <Node ID="Scheduler" />
+                </Node>
               </Node>
             </Composition>
           </Composite>

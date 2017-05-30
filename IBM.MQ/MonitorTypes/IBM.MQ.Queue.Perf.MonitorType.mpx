@@ -37,45 +37,6 @@
               <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
               <SyncTime>$Config/SyncTime$</SyncTime>
             </DataSource>
-            <ConditionDetection ID="PBFilter" TypeID="System!System.ExpressionFilter" >
-              <Expression>
-                <And>
-                  <Expression>
-                    <SimpleExpression>
-                      <ValueExpression>
-                        <Value Type="String">$Config/QueueManager$</Value>
-                      </ValueExpression>
-                      <Operator>Equal</Operator>
-                      <ValueExpression>
-                        <Value Type="String">Property[@Name='Object']</Value>
-                      </ValueExpression>
-                    </SimpleExpression>
-                  </Expression>
-                  <Expression>
-                    <SimpleExpression>
-                      <ValueExpression>
-                        <Value Type="String">$Config/QueueName$</Value>
-                      </ValueExpression>
-                      <Operator>Equal</Operator>
-                      <ValueExpression>
-                        <Value Type="String">Property[@Name='Instance']</Value>
-                      </ValueExpression>
-                    </SimpleExpression>
-                  </Expression>
-                  <Expression>
-                    <SimpleExpression>
-                      <ValueExpression>
-                        <Value Type="String">$Config/DisplayParameter$</Value>
-                      </ValueExpression>
-                      <Operator>Equal</Operator>
-                      <ValueExpression>
-                        <Value Type="String">Property[@Name='Counter']</Value>
-                      </ValueExpression>
-                    </SimpleExpression>
-                  </Expression>
-                </And>
-              </Expression>
-            </ConditionDetection>
             <ConditionDetection ID="OkFilter" TypeID="System!System.ExpressionFilter">
               <Expression>
                 <SimpleExpression>
@@ -134,23 +95,17 @@
           <RegularDetections>
             <RegularDetection MonitorTypeStateID="Ok">
               <Node ID="OkFilter">
-                <Node ID="PBFilter">
                   <Node ID="PropertyBag" />
-                </Node>
               </Node>
             </RegularDetection>
             <RegularDetection MonitorTypeStateID="Warning">
               <Node ID="WarningFilter">
-                <Node ID="PBFilter">
                   <Node ID="PropertyBag" />
-                </Node>
               </Node>
             </RegularDetection>
             <RegularDetection MonitorTypeStateID="Error">
               <Node ID="ErrorFilter">
-                <Node ID="PBFilter">
                   <Node ID="PropertyBag" />
-                </Node>
               </Node>
             </RegularDetection>
           </RegularDetections>
