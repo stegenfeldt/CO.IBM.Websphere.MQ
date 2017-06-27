@@ -41,7 +41,7 @@
               <Expression>
                 <SimpleExpression>
                   <ValueExpression>
-                    <Value Type="Double">Property[@Name='Value']</Value>
+                    <XPathQuery Type="Double">Property[@Name='Value']</XPathQuery>
                   </ValueExpression>
                   <Operator>Less</Operator>
                   <ValueExpression>
@@ -56,8 +56,8 @@
                   <Expression>
                     <SimpleExpression>
                       <ValueExpression>
-                        <Value Type="Double">Property[@Name='Value']</Value>
-                      </ValueExpression>
+                        <XPathQuery Type="Double">Property[@Name='Value']</XPathQuery>
+                    </ValueExpression>
                       <Operator>GreaterEqual</Operator>
                       <ValueExpression>
                         <Value Type="Double">$Config/WarningThreshold$</Value>
@@ -67,7 +67,7 @@
                   <Expression>
                     <SimpleExpression>
                       <ValueExpression>
-                        <Value Type="Double">Property[@Name='Value']</Value>
+                        <XPathQuery Type="Double">Property[@Name='Value']</XPathQuery>
                       </ValueExpression>
                       <Operator>Less</Operator>
                       <ValueExpression>
@@ -82,7 +82,7 @@
               <Expression>
                 <SimpleExpression>
                   <ValueExpression>
-                    <Value Type="Double">Property[@Name='Value']</Value>
+                    <XPathQuery Type="Double">Property[@Name='Value']</XPathQuery>
                   </ValueExpression>
                   <Operator>GreaterEqual</Operator>
                   <ValueExpression>

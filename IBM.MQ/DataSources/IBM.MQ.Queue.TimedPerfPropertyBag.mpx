@@ -35,7 +35,7 @@
                         </ValueExpression>
                         <Operator>Equal</Operator>
                         <ValueExpression>
-                          <Value Type="String">Data/Property[@Name='Instance']</Value>
+                          <XPathQuery Type="String">Property[@Name='Instance']</XPathQuery>
                         </ValueExpression>
                       </SimpleExpression>
                     </Expression>
@@ -46,7 +46,7 @@
                         </ValueExpression>
                         <Operator>Equal</Operator>
                         <ValueExpression>
-                          <Value Type="String">Data/Property[@Name='Object']</Value>
+                          <XPathQuery Type="String">Property[@Name='Object']</XPathQuery>
                         </ValueExpression>
                       </SimpleExpression>
                     </Expression>
@@ -57,7 +57,7 @@
                         </ValueExpression>
                         <Operator>Equal</Operator>
                         <ValueExpression>
-                          <Value Type="String">Data/Property[@Name='Counter']</Value>
+                          <XPathQuery Type="String">Property[@Name='Counter']</XPathQuery>
                         </ValueExpression>
                       </SimpleExpression>
                     </Expression>

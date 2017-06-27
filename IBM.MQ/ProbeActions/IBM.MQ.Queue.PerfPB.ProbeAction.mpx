@@ -7,8 +7,7 @@
             <SchemaType>Windows!Microsoft.Windows.PowerShellSchema</SchemaType>
           </IncludeSchemaTypes>
           <xsd:element name="QueueManager" type="NonNullString" />
-          <xsd:element name="QueueName" type="xsd:string" minOccurs="0" maxOccurs="1" />
-          <xsd:element name="DisplayParameter" type="NonNullString" />
+          <xsd:element name="DisplayParameter" type="xsd:string" minOccurs="0" />
           <xsd:element name="TimeoutSeconds" type="xsd:integer" />
         </Configuration>
         <ModuleImplementation>
@@ -21,10 +20,6 @@
                   <Parameter>
                     <Name>QueueManager</Name>
                     <Value>$Config/QueueManager$</Value>
-                  </Parameter>
-                  <Parameter>
-                    <Name>QueueName</Name>
-                    <Value>$Config/QueueName$</Value>
                   </Parameter>
                   <Parameter>
                     <Name>DisplayParameter</Name>

@@ -25,9 +25,9 @@
                 <SyncTime>$Config/SyncTime$</SyncTime>
               </DataSource>
               <ConditionDetection ID="DataMapper" TypeID="Performance!System.Performance.DataGenericMapper">
-                <ObjectName>$Data/Property[@Name='Object']$</ObjectName>
-                <CounterName>$Data/Property[@Name='Counter']$</CounterName>
-                <InstanceName>$Data/Property[@Name='Instance']$</InstanceName>
+                <ObjectName>$Config/QueueManager$</ObjectName>
+                <CounterName>$Config/DisplayParameter$</CounterName>
+                <InstanceName>$Config/QueueName$</InstanceName>
                 <Value>$Data/Property[@Name='Value']$</Value>
               </ConditionDetection>
             </MemberModules>
