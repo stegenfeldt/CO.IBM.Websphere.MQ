@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.37</Version>
+      <Version>3.2.0.38</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -1123,6 +1123,29 @@ Call oAPI.Return(oBag)
           <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
         </WriteActions>
       </Rule>
+      <Rule ID="IBM.MQ.IBM.MQ.Queue.SESSIONS.PerformanceCollection" Target="IBM.MQ.Queue" Enabled="true" ConfirmDelivery="false" Remotable="false" Priority="Normal" DiscardLevel="100">
+        <Category>PerformanceCollection</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="IBM.MQ.Queue.PerformanceDataMapper">
+            <QueueManager>$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$</QueueManager>
+            <QueueName>$Target/Property[Type='IBM.MQ.Queue']/QueueName$</QueueName>
+            <DisplayParameter>SESSIONS</DisplayParameter>
+            <TimeoutSeconds>30</TimeoutSeconds>
+            <IntervalSeconds>300</IntervalSeconds>
+            <SyncTime />
+          </DataSource>
+        </DataSources>
+        <ConditionDetection ID="CD" TypeID="Performance!System.Performance.OptimizedCollectionFilter">
+          <Tolerance>1</Tolerance>
+          <ToleranceType>Absolute</ToleranceType>
+          <MaximumSampleSeparation>10</MaximumSampleSeparation>
+          <SamplingPeriodInSeconds>300</SamplingPeriodInSeconds>
+        </ConditionDetection>
+        <WriteActions>
+          <WriteAction ID="CollectToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
+          <WriteAction ID="CollectToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
+        </WriteActions>
+      </Rule>
       <Rule ID="IBM.MQ.IBM.MQ.Queue.CURDEPTH.PerformanceCollection" Target="IBM.MQ.Queue" Enabled="true" ConfirmDelivery="false" Remotable="false" Priority="Normal" DiscardLevel="100">
         <Category>PerformanceCollection</Category>
         <DataSources>
@@ -1130,6 +1153,52 @@ Call oAPI.Return(oBag)
             <QueueManager>$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$</QueueManager>
             <QueueName>$Target/Property[Type='IBM.MQ.Queue']/QueueName$</QueueName>
             <DisplayParameter>CURDEPTH</DisplayParameter>
+            <TimeoutSeconds>30</TimeoutSeconds>
+            <IntervalSeconds>300</IntervalSeconds>
+            <SyncTime />
+          </DataSource>
+        </DataSources>
+        <ConditionDetection ID="CD" TypeID="Performance!System.Performance.OptimizedCollectionFilter">
+          <Tolerance>1</Tolerance>
+          <ToleranceType>Absolute</ToleranceType>
+          <MaximumSampleSeparation>10</MaximumSampleSeparation>
+          <SamplingPeriodInSeconds>300</SamplingPeriodInSeconds>
+        </ConditionDetection>
+        <WriteActions>
+          <WriteAction ID="CollectToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
+          <WriteAction ID="CollectToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
+        </WriteActions>
+      </Rule>
+      <Rule ID="IBM.MQ.IBM.MQ.Queue.IPPROCS.PerformanceCollection" Target="IBM.MQ.Queue" Enabled="true" ConfirmDelivery="false" Remotable="false" Priority="Normal" DiscardLevel="100">
+        <Category>PerformanceCollection</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="IBM.MQ.Queue.PerformanceDataMapper">
+            <QueueManager>$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$</QueueManager>
+            <QueueName>$Target/Property[Type='IBM.MQ.Queue']/QueueName$</QueueName>
+            <DisplayParameter>IPPROCS</DisplayParameter>
+            <TimeoutSeconds>30</TimeoutSeconds>
+            <IntervalSeconds>300</IntervalSeconds>
+            <SyncTime />
+          </DataSource>
+        </DataSources>
+        <ConditionDetection ID="CD" TypeID="Performance!System.Performance.OptimizedCollectionFilter">
+          <Tolerance>1</Tolerance>
+          <ToleranceType>Absolute</ToleranceType>
+          <MaximumSampleSeparation>10</MaximumSampleSeparation>
+          <SamplingPeriodInSeconds>300</SamplingPeriodInSeconds>
+        </ConditionDetection>
+        <WriteActions>
+          <WriteAction ID="CollectToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
+          <WriteAction ID="CollectToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
+        </WriteActions>
+      </Rule>
+      <Rule ID="IBM.MQ.IBM.MQ.Queue.OPPROCS.PerformanceCollection" Target="IBM.MQ.Queue" Enabled="true" ConfirmDelivery="false" Remotable="false" Priority="Normal" DiscardLevel="100">
+        <Category>PerformanceCollection</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="IBM.MQ.Queue.PerformanceDataMapper">
+            <QueueManager>$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$</QueueManager>
+            <QueueName>$Target/Property[Type='IBM.MQ.Queue']/QueueName$</QueueName>
+            <DisplayParameter>OPPROCS</DisplayParameter>
             <TimeoutSeconds>30</TimeoutSeconds>
             <IntervalSeconds>300</IntervalSeconds>
             <SyncTime />
@@ -2073,9 +2142,21 @@ Current Queue Depth: {0}</Description>
         <DisplayString ElementID="IBM.MQ.ServerHostingQueueManager">
           <Name>ServerHostingQueueManager</Name>
         </DisplayString>
+        <DisplayString ElementID="IBM.MQ.IBM.MQ.Queue.SESSIONS.PerformanceCollection">
+          <Name>IBM MQ Queue - SESSIONS Performance Collection</Name>
+          <Description>Collects SESSIONS statistics on MQ Queues</Description>
+        </DisplayString>
         <DisplayString ElementID="IBM.MQ.IBM.MQ.Queue.CURDEPTH.PerformanceCollection">
           <Name>IBM MQ Queue - CURDEPTH Performance Collection</Name>
           <Description>Collects CURDEPTH statistics on MQ Queues</Description>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.IBM.MQ.Queue.IPPROCS.PerformanceCollection">
+          <Name>IBM MQ Queue - IPPROCS Performance Collection</Name>
+          <Description>Collects IPPROCS statistics on MQ Queues</Description>
+        </DisplayString>
+        <DisplayString ElementID="IBM.MQ.IBM.MQ.Queue.OPPROCS.PerformanceCollection">
+          <Name>IBM MQ Queue - OPPROCS Performance Collection</Name>
+          <Description>Collects OPPROCS statistics on MQ Queues</Description>
         </DisplayString>
       </DisplayStrings>
       <KnowledgeArticles></KnowledgeArticles>
