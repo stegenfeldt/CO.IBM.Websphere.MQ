@@ -27,69 +27,6 @@
           <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
         </WriteActions>
       </Rule>
-      <Rule ID="IBM.MQ.Queue.CollectIPPROCS" Enabled="false" Target="IBM.MQ.Queue" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>PerformanceCollection</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.PerformanceProvider">
-            <IntervalSeconds>300</IntervalSeconds>
-            <SyncTime />
-            <ScriptName>CollectIPPROCS.vbs</ScriptName>
-            <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>$IncludeFileContent/Scripts/CollectIPPROCS.vbs$</ScriptBody>
-            <TimeoutSeconds>60</TimeoutSeconds>
-            <ObjectName>Queue</ObjectName>
-            <CounterName>IPPROCS</CounterName>
-            <InstanceName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</InstanceName>
-            <Value>$Data/Property[@Name='PerfValue']$</Value>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
-          <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
-        </WriteActions>
-      </Rule>
-      <Rule ID="IBM.MQ.Queue.CollectOPPROCS" Enabled="false" Target="IBM.MQ.Queue" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>PerformanceCollection</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.PerformanceProvider">
-            <IntervalSeconds>300</IntervalSeconds>
-            <SyncTime />
-            <ScriptName>CollectQueueOPPROCS.vbs</ScriptName>
-            <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>$IncludeFileContent/Scripts/CollectQueueOPPROCS.vbs$</ScriptBody>
-            <TimeoutSeconds>60</TimeoutSeconds>
-            <ObjectName>Queue</ObjectName>
-            <CounterName>OPPROCS</CounterName>
-            <InstanceName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</InstanceName>
-            <Value>$Data/Property[@Name='PerfValue']$</Value>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
-          <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
-        </WriteActions>
-      </Rule>
-      <Rule ID="IBM.MQ.Queue.CURDEPTH" Enabled="false" Target="IBM.MQ.Queue" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>PerformanceCollection</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.PerformanceProvider">
-            <IntervalSeconds>300</IntervalSeconds>
-            <SyncTime />
-            <ScriptName>CollectCURDEPTH.vbs</ScriptName>
-            <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>$IncludeFileContent/Scripts/CollectCURDEPTH.vbs$</ScriptBody>
-            <TimeoutSeconds>60</TimeoutSeconds>
-            <ObjectName>Queue</ObjectName>
-            <CounterName>CURDEPTH</CounterName>
-            <InstanceName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</InstanceName>
-            <Value>$Data/Property[@Name='PerfValue']$</Value>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
-          <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
-        </WriteActions>
-      </Rule>
     </Rules>
     <Monitors>
       <UnitMonitor ID="IBM.MQ.ChanneStatusMonitor" Accessibility="Internal" Enabled="false" Target="IBM.MQ.Channel" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.TwoStateMonitorType" ConfirmDelivery="false">
@@ -498,14 +435,6 @@ Adapted for customer environment by Samuel Tegenfeldt
         <DisplayString ElementID="IBM.MQ.MQ_Installation1.ServiceMonitor_AlertMessageResourceID">
           <Name>MQ_Installation1 Service not running on $Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetbiosComputerName$.</Name>
           <Description>IBM WebSphere MQ (Installation1) Service Not running on server {0}.</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.CollectIPPROCS">
-          <Name>IPPROCS</Name>
-          <Description>Number of Applications reading from this queue</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.CollectOPPROCS">
-          <Name>OPPROCS</Name>
-          <Description>Number of Applications writing on this queue</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueDiscovery">
           <Name>QueueDiscvoery</Name>

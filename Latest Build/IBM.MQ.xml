@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.40</Version>
+      <Version>3.2.0.42</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -987,142 +987,6 @@ Call oAPI.Return(oBag)]]></ScriptBody>
           <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
         </WriteActions>
       </Rule>
-      <Rule ID="IBM.MQ.Queue.CollectIPPROCS" Enabled="false" Target="IBM.MQ.Queue" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>PerformanceCollection</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.PerformanceProvider">
-            <IntervalSeconds>300</IntervalSeconds>
-            <SyncTime />
-            <ScriptName>CollectIPPROCS.vbs</ScriptName>
-            <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody><![CDATA[Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName, QueueName
-QueueManagerName= oArgs(0)
-QueueName = oArgs(1)
-
-IPPROCS = 0
-
-Set objShell = WScript.CreateObject("WScript.Shell")
-QueueCommand = "cmd /c echo Display Queue(" & QueueName & ") IPPROCS | runmqsc " & QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
-
-Do While Not objExecObject.StdOut.AtEndOfStream
-MQText = objExecObject.StdOut.ReadLine()
-IF INSTR(MQText,"IPPROCS(") THEN
-StatusArray =  Split(MQText, "IPPROCS(")
-IPPROCS= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
-END IF
-Loop
-
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("PerfValue",IPPROCS)
-Call oAPI.Return(oBag)]]></ScriptBody>
-            <TimeoutSeconds>60</TimeoutSeconds>
-            <ObjectName>Queue</ObjectName>
-            <CounterName>IPPROCS</CounterName>
-            <InstanceName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</InstanceName>
-            <Value>$Data/Property[@Name='PerfValue']$</Value>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
-          <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
-        </WriteActions>
-      </Rule>
-      <Rule ID="IBM.MQ.Queue.CollectOPPROCS" Enabled="false" Target="IBM.MQ.Queue" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>PerformanceCollection</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.PerformanceProvider">
-            <IntervalSeconds>300</IntervalSeconds>
-            <SyncTime />
-            <ScriptName>CollectQueueOPPROCS.vbs</ScriptName>
-            <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody><![CDATA[Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName, QueueName
-QueueManagerName= oArgs(0)
-QueueName = oArgs(1)
-
-OPPROCS = 0
-
-Set objShell = WScript.CreateObject("WScript.Shell")
-QueueCommand = "cmd /c echo Display Queue(" & QueueName & ") OPPROCS | runmqsc " & QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
-
-Do While Not objExecObject.StdOut.AtEndOfStream
-MQText = objExecObject.StdOut.ReadLine()
-IF INSTR(MQText,"OPPROCS(") THEN
-StatusArray =  Split(MQText, "OPPROCS(")
-OPPROCS= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
-END IF
-Loop
-
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("PerfValue",OPPROCS)
-Call oAPI.Return(oBag)]]></ScriptBody>
-            <TimeoutSeconds>60</TimeoutSeconds>
-            <ObjectName>Queue</ObjectName>
-            <CounterName>OPPROCS</CounterName>
-            <InstanceName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</InstanceName>
-            <Value>$Data/Property[@Name='PerfValue']$</Value>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
-          <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
-        </WriteActions>
-      </Rule>
-      <Rule ID="IBM.MQ.Queue.CURDEPTH" Enabled="false" Target="IBM.MQ.Queue" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>PerformanceCollection</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.PerformanceProvider">
-            <IntervalSeconds>300</IntervalSeconds>
-            <SyncTime />
-            <ScriptName>CollectCURDEPTH.vbs</ScriptName>
-            <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody><![CDATA[Dim oArgs
-Set oArgs = WScript.Arguments
-Dim QueueManagerName, QueueName
-QueueManagerName= oArgs(0)
-QueueName = oArgs(1)
-
-CURDEPTH = 0
-
-Set objShell = WScript.CreateObject("WScript.Shell")
-QueueCommand = "cmd /c echo Display Queue(" & QueueName & ") CURDEPTH| runmqsc " & QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
-
-Do While Not objExecObject.StdOut.AtEndOfStream
-MQText = objExecObject.StdOut.ReadLine()
-IF INSTR(MQText,"CURDEPTH(") THEN
-StatusArray =  Split(MQText, "CURDEPTH(")
-CURDEPTH= CDBL(TRIM(REPLACE(StatusArray(1),")","")))
-END IF
-Loop
-
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("PerfValue",CURDEPTH)
-Call oAPI.Return(oBag)
-]]></ScriptBody>
-            <TimeoutSeconds>60</TimeoutSeconds>
-            <ObjectName>Queue</ObjectName>
-            <CounterName>CURDEPTH</CounterName>
-            <InstanceName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</InstanceName>
-            <Value>$Data/Property[@Name='PerfValue']$</Value>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
-          <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
-        </WriteActions>
-      </Rule>
       <Rule ID="IBM.MQ.IBM.MQ.Queue.SESSIONS.PerformanceCollection" Target="IBM.MQ.Queue" Enabled="true" ConfirmDelivery="false" Remotable="false" Priority="Normal" DiscardLevel="100">
         <Category>PerformanceCollection</Category>
         <DataSources>
@@ -1816,14 +1680,6 @@ Adapted for customer environment by Samuel Tegenfeldt
         <DisplayString ElementID="IBM.MQ.MQ_Installation1.ServiceMonitor_AlertMessageResourceID">
           <Name>MQ_Installation1 Service not running on $Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetbiosComputerName$.</Name>
           <Description>IBM WebSphere MQ (Installation1) Service Not running on server {0}.</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.CollectIPPROCS">
-          <Name>IPPROCS</Name>
-          <Description>Number of Applications reading from this queue</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.CollectOPPROCS">
-          <Name>OPPROCS</Name>
-          <Description>Number of Applications writing on this queue</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueDiscovery">
           <Name>QueueDiscvoery</Name>
