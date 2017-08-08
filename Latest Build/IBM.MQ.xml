@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.38</Version>
+      <Version>3.2.0.39</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -1592,106 +1592,6 @@ Call oAPI.Return(oBag)]]></ScriptBody>
           </SuccessExpression>
         </Configuration>
       </UnitMonitor>
-      <UnitMonitor ID="IBM.MQ.CurrentQueueDepth" Accessibility="Public" Enabled="true" Target="IBM.MQ.Queue" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.ThreeStateMonitorType" ConfirmDelivery="false">
-        <Category>AvailabilityHealth</Category>
-        <AlertSettings AlertMessage="IBM.MQ.CurrentQueueDepth.AlertMessage">
-          <AlertOnState>Warning</AlertOnState>
-          <AutoResolve>true</AutoResolve>
-          <AlertPriority>Normal</AlertPriority>
-          <AlertSeverity>MatchMonitorHealth</AlertSeverity>
-          <AlertParameters>
-            <AlertParameter1>$Data/Context/Property[@Name="CurDepth"]$</AlertParameter1>
-          </AlertParameters>
-        </AlertSettings>
-        <OperationalStates>
-          <OperationalState ID="Error" MonitorTypeStateID="Error" HealthState="Error" />
-          <OperationalState ID="Warning" MonitorTypeStateID="Warning" HealthState="Warning" />
-          <OperationalState ID="Success" MonitorTypeStateID="Success" HealthState="Success" />
-        </OperationalStates>
-        <Configuration>
-          <IntervalSeconds>120</IntervalSeconds>
-          <SyncTime />
-          <ScriptName>MQCurrentQueueDepth.vbs</ScriptName>
-          <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 1000 5000</Arguments>
-          <ScriptBody><![CDATA[Option Explicit
-'SetLocale("en-us")
-
-Dim oArgs
-Set oArgs = WScript.Arguments
-
-Dim QueueManagerName, QueueName, WarningThreshold, ErrorThreshold
-QueueManagerName= oArgs(0)
-QueueName= oArgs(1)
-WarningThreshold= CDbl(oArgs(2))
-ErrorThreshold= CDbl(oArgs(3))
-
-Dim oAPI, oBag
-Set oAPI = CreateObject("MOM.ScriptAPI")
-
-Dim objShell, objExecObject, QueueCommand
-Set objShell = WScript.CreateObject("WScript.Shell")
-' cmd /c echo Display Queue(<queuename>) CURDEPTH | runmqsc <queuemgr>
-QueueCommand = "cmd /c echo Display Queue(" & Trim(QueueName) & ") CURDEPTH | runmqsc " & QueueManagerName
-Set objExecObject = objShell.Exec(QueueCommand)
-
-Dim MQText, StatusArray, CurDepth
-Do While Not objExecObject.StdOut.AtEndOfStream
-    MQText = objExecObject.StdOut.ReadLine()
-    IF INSTR(MQText,"CURDEPTH(") THEN
-        StatusArray =  Split(MQText, "CURDEPTH(")
-        CurDepth= CDbl(TRIM(REPLACE(StatusArray(1),")","")))
-    END IF
-Loop
-
-Dim Status ' OK, WARNING or ERROR
-Status = "OK"
-If CurDepth >= ErrorThreshold Then
-    Status = "ERROR"
-ElseIf CurDepth >= WarningThreshold Then
-    Status = "WARNING"
-End If
-
-Call oAPI.LogScriptEvent("QueueCurrentDepthMonitor.vbs", 17001, 0, "Status: " & Status & vbCrLf & "CurDepth: " & CurDepth)
-Set oBag = oAPI.CreatePropertyBag()
-Call oBag.AddValue("CurDepth", CurDepth)
-Call oBag.AddValue("Status", Status)
-Call oAPI.Return(oBag)]]></ScriptBody>
-          <TimeoutSeconds>60</TimeoutSeconds>
-          <ErrorExpression>
-            <SimpleExpression>
-              <ValueExpression>
-                <XPathQuery>Property[@Name="Status"]</XPathQuery>
-              </ValueExpression>
-              <Operator>Equal</Operator>
-              <ValueExpression>
-                <Value>ERROR</Value>
-              </ValueExpression>
-            </SimpleExpression>
-          </ErrorExpression>
-          <WarningExpression>
-            <SimpleExpression>
-              <ValueExpression>
-                <XPathQuery>Property[@Name="Status"]</XPathQuery>
-              </ValueExpression>
-              <Operator>Equal</Operator>
-              <ValueExpression>
-                <Value>WARNING</Value>
-              </ValueExpression>
-            </SimpleExpression>
-          </WarningExpression>
-          <SuccessExpression>
-            <SimpleExpression>
-              <ValueExpression>
-                <XPathQuery>Property[@Name="Status"]</XPathQuery>
-              </ValueExpression>
-              <Operator>Equal</Operator>
-              <ValueExpression>
-                <Value>OK</Value>
-              </ValueExpression>
-            </SimpleExpression>
-          </SuccessExpression>
-        </Configuration>
-      </UnitMonitor>
       <UnitMonitor ID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor" Accessibility="Public" Enabled="true" Target="IBM.MQ.Queue" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="false" Priority="Normal" TypeID="IBM.MQ.Queue.Perf.MonitorType" ConfirmDelivery="false">
         <Category>PerformanceHealth</Category>
         <AlertSettings AlertMessage="IBM.MQ.Queue.CURDEPTH.Perf.Monitor.AlertMessage">
@@ -1797,7 +1697,6 @@ Call oAPI.Return(oBag)]]></ScriptBody>
       <StringResource ID="IBM.MQ.MQ_Installation1.ServiceMonitor_AlertMessageResourceID" />
       <StringResource ID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor_AlertMessageResourceID" />
       <StringResource ID="IBM.MQ.QueueManagerStatusMonitor_AlertMessageResourceID" />
-      <StringResource ID="IBM.MQ.CurrentQueueDepth.AlertMessage" />
       <StringResource ID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor.AlertMessage" />
     </StringResources>
   </Presentation>
@@ -2084,29 +1983,6 @@ Adapted for customer environment by Samuel Tegenfeldt
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.ServerState">
           <Name>Server State</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.CurrentQueueDepth">
-          <Name>LEGACY MQ Queue Current Depth Monitor</Name>
-          <Description>The current queue depth is above the configured thresholds. See more information in Alert Context.</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.CurrentQueueDepth.AlertMessage">
-          <Name>Current Depth Monitor exceeds Threshold</Name>
-          <Description>The current queue depth is above the configured thresholds.
-
-Current queue depth is: {0}
-Please see Alert Context for more information.</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.CurrentQueueDepth" SubElementID="Error">
-          <Name>AboveCritical</Name>
-          <Description>AboveCritical</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.CurrentQueueDepth" SubElementID="Warning">
-          <Name>AboveWarning</Name>
-          <Description>AboveWarning</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.CurrentQueueDepth" SubElementID="Success">
-          <Name>OK</Name>
-          <Description>OK</Description>
         </DisplayString>
         <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH.Perf.Monitor">
           <Name>Queue CURDEPTH Monitor</Name>
