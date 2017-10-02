@@ -27,85 +27,8 @@
           <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
         </WriteActions>
       </Rule>
-      <Rule ID="IBM.MQ.Queue.CollectIPPROCS" Enabled="false" Target="IBM.MQ.Queue" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>PerformanceCollection</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.PerformanceProvider">
-            <IntervalSeconds>300</IntervalSeconds>
-            <SyncTime />
-            <ScriptName>CollectIPPROCS.vbs</ScriptName>
-            <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>$IncludeFileContent/Scripts/CollectIPPROCS.vbs$</ScriptBody>
-            <TimeoutSeconds>60</TimeoutSeconds>
-            <ObjectName>Queue</ObjectName>
-            <CounterName>IPPROCS</CounterName>
-            <InstanceName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</InstanceName>
-            <Value>$Data/Property[@Name='PerfValue']$</Value>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
-          <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
-        </WriteActions>
-      </Rule>
-      <Rule ID="IBM.MQ.Queue.CollectOPPROCS" Enabled="false" Target="IBM.MQ.Queue" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>PerformanceCollection</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.PerformanceProvider">
-            <IntervalSeconds>300</IntervalSeconds>
-            <SyncTime />
-            <ScriptName>CollectQueueOPPROCS.vbs</ScriptName>
-            <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>$IncludeFileContent/Scripts/CollectQueueOPPROCS.vbs$</ScriptBody>
-            <TimeoutSeconds>60</TimeoutSeconds>
-            <ObjectName>Queue</ObjectName>
-            <CounterName>OPPROCS</CounterName>
-            <InstanceName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</InstanceName>
-            <Value>$Data/Property[@Name='PerfValue']$</Value>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
-          <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
-        </WriteActions>
-      </Rule>
-      <Rule ID="IBM.MQ.Queue.CURDEPTH" Enabled="false" Target="IBM.MQ.Queue" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>PerformanceCollection</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedScript.PerformanceProvider">
-            <IntervalSeconds>300</IntervalSeconds>
-            <SyncTime />
-            <ScriptName>CollectCURDEPTH.vbs</ScriptName>
-            <Arguments>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$</Arguments>
-            <ScriptBody>$IncludeFileContent/Scripts/CollectCURDEPTH.vbs$</ScriptBody>
-            <TimeoutSeconds>60</TimeoutSeconds>
-            <ObjectName>Queue</ObjectName>
-            <CounterName>CURDEPTH</CounterName>
-            <InstanceName>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</InstanceName>
-            <Value>$Data/Property[@Name='PerfValue']$</Value>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WriteToDB" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
-          <WriteAction ID="WriteToDW" TypeID="SCDW!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />
-        </WriteActions>
-      </Rule>
     </Rules>
     <Monitors>
-      <AggregateMonitor ID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor" Accessibility="Internal" Enabled="true" Target="IBM.MQ.Queue" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal">
-        <Category>Custom</Category>
-        <AlertSettings AlertMessage="IBM.MQ.Queue.DepthAndIPPROCS.Monitor_AlertMessageResourceID">
-          <AlertOnState>Error</AlertOnState>
-          <AutoResolve>true</AutoResolve>
-          <AlertPriority>Normal</AlertPriority>
-          <AlertSeverity>Error</AlertSeverity>
-          <AlertParameters>
-            <AlertParameter1>$Target/Property[Type="IBM.MQ.Queue"]/QueueName$</AlertParameter1>
-            <AlertParameter2>$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$</AlertParameter2>
-          </AlertParameters>
-        </AlertSettings>
-        <Algorithm>BestOf</Algorithm>
-      </AggregateMonitor>
       <UnitMonitor ID="IBM.MQ.ChanneStatusMonitor" Accessibility="Internal" Enabled="false" Target="IBM.MQ.Channel" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.TwoStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <AlertSettings AlertMessage="IBM.MQ.ChanneStatusMonitor_AlertMessageResourceID">
@@ -275,44 +198,6 @@
           <CheckStartupType />
         </Configuration>
       </UnitMonitor>
-      <UnitMonitor ID="IBM.MQ.Queue.IPPROCS.Monitor" Accessibility="Internal" Enabled="false" Target="IBM.MQ.Queue" ParentMonitorID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.TwoStateMonitorType" ConfirmDelivery="false">
-        <Category>AvailabilityHealth</Category>
-        <OperationalStates>
-          <OperationalState ID="Success" MonitorTypeStateID="Success" HealthState="Success" />
-          <OperationalState ID="Error" MonitorTypeStateID="Error" HealthState="Error" />
-        </OperationalStates>
-        <Configuration>
-          <IntervalSeconds>300</IntervalSeconds>
-          <SyncTime />
-          <ScriptName>MonitorIPPROCS.vbs</ScriptName>
-          <Arguments />
-          <ScriptBody>$IncludeFileContent/Scripts/MonitorIPPROCS.vbs$</ScriptBody>
-          <SecureInput />
-          <TimeoutSeconds>60</TimeoutSeconds>
-          <ErrorExpression>
-            <SimpleExpression>
-              <ValueExpression>
-                <XPathQuery Type="String">Property[@Name='IPPROCS']</XPathQuery>
-              </ValueExpression>
-              <Operator>Equal</Operator>
-              <ValueExpression>
-                <Value Type="String">0</Value>
-              </ValueExpression>
-            </SimpleExpression>
-          </ErrorExpression>
-          <SuccessExpression>
-            <SimpleExpression>
-              <ValueExpression>
-                <XPathQuery Type="String">Property[@Name='IPPROCS']</XPathQuery>
-              </ValueExpression>
-              <Operator>Greater</Operator>
-              <ValueExpression>
-                <Value Type="String">0</Value>
-              </ValueExpression>
-            </SimpleExpression>
-          </SuccessExpression>
-        </Configuration>
-      </UnitMonitor>
       <UnitMonitor ID="IBM.MQ.QueueManagerStatusMonitor" Accessibility="Internal" Enabled="true" Target="IBM.MQ.QueueManager" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.TwoStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <AlertSettings AlertMessage="IBM.MQ.QueueManagerStatusMonitor_AlertMessageResourceID">
@@ -440,7 +325,6 @@
       <StringResource ID="IBM.MQ.ChanneStatusMonitor_AlertMessageResourceID" />
       <StringResource ID="IBM.MQ.ListenerStatusMonitor_AlertMessageResourceID" />
       <StringResource ID="IBM.MQ.MQ_Installation1.ServiceMonitor_AlertMessageResourceID" />
-      <StringResource ID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor_AlertMessageResourceID" />
       <StringResource ID="IBM.MQ.QueueManagerStatusMonitor_AlertMessageResourceID" />
     </StringResources>
   </Presentation>
@@ -552,41 +436,6 @@ Adapted for customer environment by Samuel Tegenfeldt
           <Name>MQ_Installation1 Service not running on $Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetbiosComputerName$.</Name>
           <Description>IBM WebSphere MQ (Installation1) Service Not running on server {0}.</Description>
         </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.CollectIPPROCS">
-          <Name>IPPROCS</Name>
-          <Description>Number of Applications reading from this queue</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.CollectOPPROCS">
-          <Name>OPPROCS</Name>
-          <Description>Number of Applications writing on this queue</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.CURDEPTH">
-          <Name>CURDEPTH</Name>
-          <Description>Colelct Current Queue Depth</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor">
-          <Name>Queue Depth and IPPROCS</Name>
-          <Description>This monitor check on Queue Depth and Number applications Rading from it. if the queue depth is high and no applications are reading, then alert will be triggered.</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.DepthAndIPPROCS.Monitor_AlertMessageResourceID">
-          <Name>IBM MQ Alert: Queue Depth and IPPROCS</Name>
-          <Description>
-            Queue depth is increasing while no messgaes being processed. find out detailed information of this monitor.
-
-            Queue Name: {0}
-            Queue Manager Name: {1}
-          </Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.IPPROCS.Monitor">
-          <Name>IPPROCS</Name>
-          <Description>Monitor number of applications reading from this Queue</Description>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.IPPROCS.Monitor" SubElementID="Error">
-          <Name>Error</Name>
-        </DisplayString>
-        <DisplayString ElementID="IBM.MQ.Queue.IPPROCS.Monitor" SubElementID="Success">
-          <Name>Success</Name>
-        </DisplayString>
         <DisplayString ElementID="IBM.MQ.QueueDiscovery">
           <Name>QueueDiscvoery</Name>
           <Description>discover Queues</Description>
@@ -598,7 +447,6 @@ Adapted for customer environment by Samuel Tegenfeldt
           <Name>Queue Manager Discovery</Name>
           <Description>Discover Queue Managers</Description>
         </DisplayString>
-
         <DisplayString ElementID="IBM.MQ.QueueManagerListenersMonitor">
           <Name>Listeners Overall Health</Name>
         </DisplayString>

@@ -1,53 +1,7 @@
 <TemplateGroup>
   <Instances>
-    <Instance ID="Instance1cb8bbbf42bb4bd8ba0ce5a2d4aaa2da" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.Monitoring.UnitMonitor" Version="1.0.0.0">
-      <UnitMonitorConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-        <MonitorType>Windows!Microsoft.Windows.TimedScript.ThreeStateMonitorType</MonitorType>
-        <MonitorConfig>&lt;IntervalSeconds&gt;120&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;&lt;ScriptName&gt;MQCurrentQueueDepth.vbs&lt;/ScriptName&gt;&lt;Arguments&gt;$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$ $Target/Property[Type="IBM.MQ.Queue"]/QueueName$ 1000 5000&lt;/Arguments&gt;&lt;ScriptBody&gt;$IncludeFileContent/Scripts/QueueCurrentDepthMonitor.vbs$&lt;/ScriptBody&gt;&lt;TimeoutSeconds&gt;60&lt;/TimeoutSeconds&gt;&lt;ErrorExpression&gt;&lt;SimpleExpression&gt;&lt;ValueExpression&gt;&lt;XPathQuery&gt;Property[@Name="Status"]&lt;/XPathQuery&gt;&lt;/ValueExpression&gt;&lt;Operator&gt;Equal&lt;/Operator&gt;&lt;ValueExpression&gt;&lt;Value&gt;ERROR&lt;/Value&gt;&lt;/ValueExpression&gt;&lt;/SimpleExpression&gt;&lt;/ErrorExpression&gt;&lt;WarningExpression&gt;&lt;SimpleExpression&gt;&lt;ValueExpression&gt;&lt;XPathQuery&gt;Property[@Name="Status"]&lt;/XPathQuery&gt;&lt;/ValueExpression&gt;&lt;Operator&gt;Equal&lt;/Operator&gt;&lt;ValueExpression&gt;&lt;Value&gt;WARNING&lt;/Value&gt;&lt;/ValueExpression&gt;&lt;/SimpleExpression&gt;&lt;/WarningExpression&gt;&lt;SuccessExpression&gt;&lt;SimpleExpression&gt;&lt;ValueExpression&gt;&lt;XPathQuery&gt;Property[@Name="Status"]&lt;/XPathQuery&gt;&lt;/ValueExpression&gt;&lt;Operator&gt;Equal&lt;/Operator&gt;&lt;ValueExpression&gt;&lt;Value&gt;OK&lt;/Value&gt;&lt;/ValueExpression&gt;&lt;/SimpleExpression&gt;&lt;/SuccessExpression&gt;</MonitorConfig>
-        <MonitorOperationalStates>
-          <OperationalState>
-            <OperationalStateId>Error</OperationalStateId>
-            <OperationalStateDisplayName>AboveCritical</OperationalStateDisplayName>
-            <MonitorTypeStateId>Error</MonitorTypeStateId>
-            <HealthState>Error</HealthState>
-          </OperationalState>
-          <OperationalState>
-            <OperationalStateId>Warning</OperationalStateId>
-            <OperationalStateDisplayName>AboveWarning</OperationalStateDisplayName>
-            <MonitorTypeStateId>Warning</MonitorTypeStateId>
-            <HealthState>Warning</HealthState>
-          </OperationalState>
-          <OperationalState>
-            <OperationalStateId>Success</OperationalStateId>
-            <OperationalStateDisplayName>OK</OperationalStateDisplayName>
-            <MonitorTypeStateId>Success</MonitorTypeStateId>
-            <HealthState>Success</HealthState>
-          </OperationalState>
-        </MonitorOperationalStates>
-        <ParentMonitor>Health!System.Health.AvailabilityState</ParentMonitor>
-        <Accessibility>Public</Accessibility>
-        <Id>CurrentQueueDepth</Id>
-        <DisplayName>LEGACY MQ Queue Current Depth Monitor</DisplayName>
-        <Description>The current queue depth is above the configured thresholds. See more information in Alert Context.</Description>
-        <Target>IBM.MQ.Queue</Target>
-        <Enabled>false</Enabled>
-        <Category>AvailabilityHealth</Category>
-        <Remotable>true</Remotable>
-        <Priority>Normal</Priority>
-        <AlertAutoResolve>true</AlertAutoResolve>
-        <AlertOnState>Warning</AlertOnState>
-        <AlertPriority>Normal</AlertPriority>
-        <AlertSeverity>MatchMonitorHealth</AlertSeverity>
-        <AlertName>Current Depth Monitor exceeds Threshold</AlertName>
-        <AlertDescription>The current queue depth is above the configured thresholds.
-
-Current queue depth is: $Data/Context/Property[@Name="CurDepth"]$
-Please see Alert Context for more information.</AlertDescription>
-        <ConfirmDelivery>false</ConfirmDelivery>
-      </UnitMonitorConfig>
-    </Instance>
     <Instance ID="Instance84d255ac54984c3da3ef958bc655fe4a" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.Monitoring.UnitMonitor" Version="1.0.0.0">
-      <UnitMonitorConfig xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <UnitMonitorConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         <MonitorType>IBM.MQ.Queue.Perf.MonitorType</MonitorType>
         <MonitorConfig>&lt;WarningThreshold&gt;2000&lt;/WarningThreshold&gt;&lt;ErrorThreshold&gt;5000&lt;/ErrorThreshold&gt;&lt;QueueManager&gt;$Target/Property[Type="IBM.MQ.Queue"]/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type="IBM.MQ.Queue"]/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;CURDEPTH&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;60&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;600&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</MonitorConfig>
         <MonitorOperationalStates>
