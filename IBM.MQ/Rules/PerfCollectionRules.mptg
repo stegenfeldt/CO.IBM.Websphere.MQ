@@ -16,14 +16,14 @@
         <ConditionDetectionId>CD</ConditionDetectionId>
         <ConditionDetectionType>Performance!System.Performance.OptimizedCollectionFilter</ConditionDetectionType>
         <DataSourceId>DS</DataSourceId>
-        <DataSourceConfig>&lt;QueueManager&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;SESSIONS&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;30&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;300&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</DataSourceConfig>
+        <DataSourceConfig>&lt;QueueManager&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;SESSIONS&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;60&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;300&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</DataSourceConfig>
         <DataSourceType>IBM.MQ.Queue.PerformanceDataMapper</DataSourceType>
         <CollectToDB>true</CollectToDB>
         <CollectToDW>true</CollectToDW>
       </PerformanceCollectionRuleConfig>
     </Instance>
     <Instance ID="Instancebbedc1c1969c47d7ae373cbceb11ca2c" Type="Microsoft.SystemCenter.Authoring.CodeGeneration.Monitoring.PerformanceCollectionRule" Version="1.0.0.0">
-      <PerformanceCollectionRuleConfig xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <PerformanceCollectionRuleConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         <Id>IBM.MQ.Queue.CURDEPTH.PerformanceCollection</Id>
         <DisplayName>IBM MQ Queue - CURDEPTH Performance Collection</DisplayName>
         <Description>Collects CURDEPTH statistics on MQ Queues</Description>
@@ -38,7 +38,7 @@
         <ConditionDetectionId>CD</ConditionDetectionId>
         <ConditionDetectionType>Performance!System.Performance.OptimizedCollectionFilter</ConditionDetectionType>
         <DataSourceId>DS</DataSourceId>
-        <DataSourceConfig>&lt;QueueManager&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;CURDEPTH&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;30&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;300&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</DataSourceConfig>
+        <DataSourceConfig>&lt;QueueManager&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;CURDEPTH&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;60&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;300&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</DataSourceConfig>
         <DataSourceType>IBM.MQ.Queue.PerformanceDataMapper</DataSourceType>
         <CollectToDB>true</CollectToDB>
         <CollectToDW>true</CollectToDW>
@@ -60,7 +60,7 @@
         <ConditionDetectionId>CD</ConditionDetectionId>
         <ConditionDetectionType>Performance!System.Performance.OptimizedCollectionFilter</ConditionDetectionType>
         <DataSourceId>DS</DataSourceId>
-        <DataSourceConfig>&lt;QueueManager&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;IPPROCS&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;30&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;300&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</DataSourceConfig>
+        <DataSourceConfig>&lt;QueueManager&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;IPPROCS&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;60&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;300&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</DataSourceConfig>
         <DataSourceType>IBM.MQ.Queue.PerformanceDataMapper</DataSourceType>
         <CollectToDB>true</CollectToDB>
         <CollectToDW>true</CollectToDW>
@@ -82,7 +82,7 @@
         <ConditionDetectionId>CD</ConditionDetectionId>
         <ConditionDetectionType>Performance!System.Performance.OptimizedCollectionFilter</ConditionDetectionType>
         <DataSourceId>DS</DataSourceId>
-        <DataSourceConfig>&lt;QueueManager&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;OPPROCS&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;30&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;300&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</DataSourceConfig>
+        <DataSourceConfig>&lt;QueueManager&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueManagerName$&lt;/QueueManager&gt;&lt;QueueName&gt;$Target/Property[Type='IBM.MQ.Queue']/QueueName$&lt;/QueueName&gt;&lt;DisplayParameter&gt;OPPROCS&lt;/DisplayParameter&gt;&lt;TimeoutSeconds&gt;60&lt;/TimeoutSeconds&gt;&lt;IntervalSeconds&gt;300&lt;/IntervalSeconds&gt;&lt;SyncTime /&gt;</DataSourceConfig>
         <DataSourceType>IBM.MQ.Queue.PerformanceDataMapper</DataSourceType>
         <CollectToDB>true</CollectToDB>
         <CollectToDW>true</CollectToDW>

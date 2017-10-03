@@ -13,6 +13,10 @@
           <xsd:element name="IntervalSeconds" type="xsd:integer" />
           <xsd:element name="SyncTime" type="xsd:string" />
         </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+        </OverrideableParameters>
         <ModuleImplementation>
           <Composite>
             <MemberModules>
