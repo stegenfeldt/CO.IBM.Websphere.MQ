@@ -64,22 +64,28 @@ function Get-MQQueueNames
 	return $queueNames
 }
 
-function Write-DebugLog ($Message) {
-	if ($MyInvocation.ScriptName.Length -gt 0) {
-		$scriptName = $MyInvocation.ScriptName
-		$scriptName = $scriptName.Substring($scriptName.LastIndexOf("\")+1,$scriptName.LastIndexOf(".") - $scriptName.LastIndexOf("\")-1)
-	}
-	else {
-		$scriptName = $PID
-	}
+function Write-DebugLog {
+	param(
+		[string] $Message
+		,[switch] $ClearFile
+	)
+
+	$scriptName = "OM_MQQUEUE_PERF"
+
 	$logFilePath = ("{0}\{2}_{1}.log" -f "C:\Windows\Temp",$(Get-Date -Format yyyyMMdd),$scriptName)
 	$Message = "{0}`t{1}`t{3}`t{2}" -f $(Get-Date -Format o),$PID,$Message,$env:USERNAME
-	Out-File -LiteralPath $logFilePath -InputObject $Message -Append
+
+	if ($ClearFile) {
+		Out-File -LiteralPath $logFilePath -InputObject $Message
+	}
+	else {
+		Out-File -LiteralPath $logFilePath -InputObject $Message -Append
+	}
 }
 
 function Main()
 {
-	Write-DebugLog -Message "Starting script using parameters: QueueManager=$QueueManager; QueueName=$QueueName; DisplayParameter=$DisplayParameter"
+	Write-DebugLog -Message "Starting script using parameters: QueueManager=$QueueManager; QueueName=$QueueName; DisplayParameter=$DisplayParameter" -ClearFile
 	# Is QueueName provided?
 	if ($QueueName)
 	{
