@@ -21,10 +21,6 @@
                     <Name>QueueManager</Name>
                     <Value>$Config/QueueManager$</Value>
                   </Parameter>
-                  <Parameter>
-                    <Name>DisplayParameter</Name>
-                    <Value>$Config/DisplayParameter$</Value>
-                  </Parameter>
                 </Parameters>
                 <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
               </ProbeAction>

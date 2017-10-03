@@ -3,7 +3,7 @@
   <Manifest>
     <Identity>
       <ID>IBM.MQ</ID>
-      <Version>3.2.0.43</Version>
+      <Version>3.2.0.45</Version>
     </Identity>
     <Name>IBM.MQ</Name>
     <References>
@@ -108,6 +108,10 @@
           <xsd:element name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
           <xsd:element name="SyncTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
         </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+        </OverrideableParameters>
         <ModuleImplementation>
           <Composite>
             <MemberModules>
@@ -160,7 +164,7 @@
               </DataSource>
               <ProbeAction ID="PropertyBag" TypeID="IBM.MQ.Queue.PerfPB.ProbeAction">
                 <QueueManager>$Config/QueueManager$</QueueManager>
-                <DisplayParameter>$Config/DisplayParameter$</DisplayParameter>
+                <!--<DisplayParameter>$Config/DisplayParameter$</DisplayParameter>-->
                 <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
               </ProbeAction>
               <ConditionDetection ID="PBfilter" TypeID="System!System.ExpressionFilter" Comment="Cookdown enabling filter">
@@ -231,9 +235,9 @@
                 <ScriptBody><![CDATA[[CmdletBinding()]
 Param (
 	[Parameter(Mandatory=$true)]
-	[string] $QueueManager,
-	#[string] $QueueName,
-	[string] $DisplayParameter
+	[string] $QueueManager
+	#,[string] $QueueName
+	#,[string] $DisplayParameter
 )
 
 function Get-MQPerfdataFromCmd ($CommandResult, $DisplayParameter)
@@ -366,10 +370,6 @@ Main]]></ScriptBody>
                   <Parameter>
                     <Name>QueueManager</Name>
                     <Value>$Config/QueueManager$</Value>
-                  </Parameter>
-                  <Parameter>
-                    <Name>DisplayParameter</Name>
-                    <Value>$Config/DisplayParameter$</Value>
                   </Parameter>
                 </Parameters>
                 <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>

@@ -1,9 +1,9 @@
 ﻿[CmdletBinding()]
 Param (
 	[Parameter(Mandatory=$true)]
-	[string] $QueueManager,
-	#[string] $QueueName,
-	[string] $DisplayParameter
+	[string] $QueueManager
+	#,[string] $QueueName
+	#,[string] $DisplayParameter
 )
 
 function Get-MQPerfdataFromCmd ($CommandResult, $DisplayParameter)
