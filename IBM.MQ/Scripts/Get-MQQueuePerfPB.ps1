@@ -121,19 +121,21 @@ function Main()
 			# extract performance data
 			$perfData = Get-MQPerfdataFromCmd -CommandResult $displayResult -DisplayParameter $DisplayParameter
 
+			$omPb = $omApi.CreatePropertyBag()
 			if ($perfData) {
-				# Create property bag object and populate values
-				$omPb = $omApi.CreatePropertyBag()
 				$omPb.AddValue("Value", $perfData)
-				$omPb.AddValue("Object", $QueueManager)
-				$omPb.AddValue("Instance", $queueName)
-				$omPb.AddValue("Counter", $DisplayParameter)
-
-				Write-DebugLog -Message "$DisplayParameter on $QueueManager/$queueName = $perfData"
-
-				# Return property bag to workflow
-				$omPb
+			} else {
+				$omPb.AddValue("Value", 0)
 			}
+			# Create property bag object and populate values
+			$omPb.AddValue("Object", $QueueManager)
+			$omPb.AddValue("Instance", $queueName)
+			$omPb.AddValue("Counter", $DisplayParameter)
+
+			Write-DebugLog -Message "$DisplayParameter on $QueueManager/$queueName = $perfData"
+
+			# Return property bag to workflow
+			$omPb
 		}
 	}
 }
